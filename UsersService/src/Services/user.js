@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const { SECRET } = require('../Config/index');
-const { Users } = require('../Databases/index');
+const { Users } = require('../../Databases/index');
 const Roles = require('../Utils/roles');
 
 exports.registerUser = async (req, res, next) => {

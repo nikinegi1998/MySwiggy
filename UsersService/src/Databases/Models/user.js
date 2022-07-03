@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 
-const userSchema = mongoose.Schema({
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
     role: {
         type: String,
         required: true
@@ -28,14 +30,35 @@ const userSchema = mongoose.Schema({
             type: String
         }
     },
+    // properties:{
+    //     orders: {
+    //         type: String
+    //         // type: Schema.Types.ObjectId
+    //         // ref: 'Order'
+    //     },
+    //     ratings: {
+    //         type: Number
+    //     }
+    // admin id include here========================
+    // }
     orders: {
         type: String
         // type: Schema.Types.ObjectId
         // ref: 'Order'
     },
     ratings: {
-        type: Number
+        rate: {
+            type: Number,
+            min: 1,
+            max: 5,
+            default: 1
+        },
+        total: {
+            type: Number,
+            default: 1
+        }
     }
+    
 })
 
 const Users = mongoose.model('Users', userSchema);
