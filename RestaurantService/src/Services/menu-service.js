@@ -1,6 +1,12 @@
 const { MenuModel, RestaurantModel } = require('../Databases/index');
 const uuid = require('uuid');
 
+/**
+ * creates new cuisine 
+ * @param {Request} req incoming request object
+ * @param {Response} res outgoing response object
+ * @param {Function} next to make a call to next middleware
+ */
 exports.createCuisine = async (req, res, next) => {
     const rid = req.params.rid;
 

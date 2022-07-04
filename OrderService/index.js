@@ -2,9 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
-const {dbConnection} = require('./Databases/index');
-const { PORT } = require('./Config/index');
-const restaurantApi = require('./Api/user');
+const {dbConnection} = require('./src/Databases/index');
+const { PORT } = require('./src/Config/index');
+const orderApi = require('./src/Api/order-api');
 
 const StartServer = async () => {
     const app = express();
@@ -15,7 +15,7 @@ const StartServer = async () => {
 
     dbConnection();
 
-    app.use('/user', restaurantApi);
+    app.use('/order', orderApi);
 
     // error handling middleware
     app.use((error, req, res, next) => {

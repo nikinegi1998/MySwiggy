@@ -13,13 +13,9 @@ const orderSchema = new Schema({
             required: true
         }
     }],
-    totalprice: {
-        type: Number,
-        required: true
-    },
-    customer:{
+    customerDetails:{
         type: Schema.Types.ObjectId,
-        ref: 'Users'
+        required: true
     },
     orderStatus:{
         type: Boolean,          // either reject or accept
@@ -27,25 +23,12 @@ const orderSchema = new Schema({
     },
     deliveryPartner:{
         type: Schema.Types.ObjectId,
-        ref: 'Users'
+        required: true
     },
     deliveryStatus:{
         type: String,           // otw or reached or pickup or delivered
         required: true
-    },
-    ratings: {
-        rate: {
-            type: Number,
-            min: 1,
-            max: 5,
-            default: 1
-        },
-        total: {
-            type: Number,
-            default: 1
-        }
-    },
-
+    }
 })
 
 const Orders = mongoose.model('Orders', orderSchema);
