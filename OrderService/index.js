@@ -1,8 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const axios = require('axios');
 
-const {dbConnection} = require('./src/Databases/index');
+const { dbConnection } = require('./src/Databases/index');
 const { PORT } = require('./src/Config/index');
 const orderApi = require('./src/Api/order-api');
 
@@ -14,7 +15,7 @@ const StartServer = async () => {
     app.use(bodyParser.json())
 
     dbConnection();
-
+    
     app.use('/order', orderApi);
 
     // error handling middleware
@@ -25,8 +26,8 @@ const StartServer = async () => {
     })
 
     // Handles all the invalid endpoints
-    app.use((req, res, next)=>{
-        res.status(404).json({message: 'Page Not Found'})
+    app.use((req, res, next) => {
+        res.status(404).json({ message: 'Page Not Found' })
     })
 
     app.listen(PORT, () => {

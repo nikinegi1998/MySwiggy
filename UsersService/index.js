@@ -2,9 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
-const {dbConnection} = require('./Databases/index');
-const { PORT } = require('./Config/index');
-const userApi = require('./Api/user');
+const {dbConnection} = require('./src/Databases/index');
+const { PORT } = require('./src/Config/index');
+const userApi = require('./src/Api/user');
 
 const StartServer = async () => {
     const app = express();
