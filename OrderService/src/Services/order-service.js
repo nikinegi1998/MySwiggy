@@ -1,9 +1,16 @@
 const { Orders } = require('../Databases/index');
 const Delivery = require('../Utils/delivery');
+const { validationResult } = require('express-validator');
 
 exports.createOrder = async (req, res, next) => {
 
     try {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            throw customError('Validation error in register', 422)
+        }
+        
         const { name, price, customerId } = req.body;
 
         const order = new Orders({
@@ -20,7 +27,7 @@ exports.createOrder = async (req, res, next) => {
         })
     }
     catch (error) {
-        return errorHandler();
+        next(errorHandler(error));
     }
 
 }
@@ -54,7 +61,7 @@ exports.getOrderStatus = async (req, res, next) => {
         }
     }
     catch (error) {
-        return errorHandler();
+        next(errorHandler(error));
     }
 }
 
@@ -93,7 +100,7 @@ exports.updateDeliveryStatus = async (req, res, next) => {
 
     }
     catch (error) {
-        return errorHandler();
+        next(errorHandler(error));
     }
 
 }
@@ -126,7 +133,7 @@ exports.updateOrderStatus = async (req, res, next) => {
 
     }
     catch (error) {
-        return errorHandler();
+        next(errorHandler(error));
     }
 
 }
@@ -156,7 +163,7 @@ exports.deleteOrder = async (req, res, next) => {
 
     }
     catch (error) {
-        return errorHandler();
+        next(errorHandler(error));
     }
 
 }
@@ -168,9 +175,9 @@ const customError = (msg, code) => {
     return error;
 }
 
-const errorHandler = () => {
+const errorHandler = (error) => {
     if (!error.statusCode) {
         error.statusCode = 500;
     }
-    next(error);
+    return error
 }

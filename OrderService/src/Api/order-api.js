@@ -5,8 +5,14 @@ const orderServices = require('../Services/order-service');
 
 const router = express.Router();
 
-// create new cuisine
-router.post('/create', orderServices.createOrder);
+// create new order
+router.post('/create', [
+    body('name', 'Enter valid dish name')
+        .isString()
+        .isLength({ min: 4 }),
+    body('price', 'Enter valid price of the dish')
+        .isNumeric()
+], orderServices.createOrder);
 
 // fetch order status by customer
 router.get('/:orderId', orderServices.getOrderStatus);

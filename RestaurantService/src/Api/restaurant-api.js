@@ -6,7 +6,14 @@ const restrServices = require('../Services/restaurant-service');
 const router = express.Router();
 
 // create new restaurant
-router.post('/create', restrServices.createRestaurant);
+router.post('/create',[
+    body('name', 'Enter a valid restaurant name with min length of 4')
+        .isString()
+        .isLength({ min: 4 }),
+    body('location', 'Enter a valid location with min length of 4')
+        .isString()
+        .isLength({ min: 4 }),
+], restrServices.createRestaurant);
 
 // get restaurant by name
 router.get('/:name', restrServices.getRestaurantsByName);

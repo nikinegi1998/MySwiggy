@@ -1,23 +1,28 @@
 const { RestaurantModel } = require('../Databases/index');
 const mongoose = require('mongoose');
+const { validationResult } = require('express-validator');
+
 
 exports.createRestaurant = async (req, res, next) => {
-    const { name, location } = req.body;
 
     try {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            throw customError('Validation error in register', 422)
+        }
+
+        const { name, location } = req.body;
+
         const doc = await RestaurantModel.findOne({
-            $and: [
-                {
-                    name: { $eq: name },
-                    location: { $eq: location }
-                }
-            ]
+            $and: [{
+                name: { $eq: name },
+                location: { $eq: location }
+            }]
         })
 
         if (doc) {
-            const error = new Error('Restaurant already exist at this location');
-            error.statusCode = 422;
-            throw error;
+            throw customError('Restaurant already exist at this location', 422);
         }
 
         const restaurant = new RestaurantModel({
@@ -32,10 +37,7 @@ exports.createRestaurant = async (req, res, next) => {
         })
     }
     catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
+        next(errorHandler(error));
     }
 
 }
@@ -47,9 +49,7 @@ exports.deleteRestaurant = async (req, res, next) => {
         const restaurant = await RestaurantModel.findById(rid);
 
         if (!restaurant) {
-            const error = new Error('Restaurant not exist');
-            error.statusCode = 422;
-            next(err);
+            throw customError('Restaurant not exist', 422)
         }
 
         await RestaurantModel.deleteOne({ _id: rid });
@@ -59,10 +59,7 @@ exports.deleteRestaurant = async (req, res, next) => {
         })
     }
     catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
+        next(errorHandler(error));
     }
 }
 
@@ -72,9 +69,7 @@ exports.getAllRestaurants = async (req, res, next) => {
         const restaurants = await RestaurantModel.find();
 
         if (!restaurants) {
-            const error = new Error('No restaurants exist');
-            error.statusCode = 422;
-            next(error);
+            throw customError('No restaurants exist', 422)
         }
         res.status(200).json({
             message: 'List of restaurants',
@@ -82,10 +77,7 @@ exports.getAllRestaurants = async (req, res, next) => {
         })
     }
     catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
+        next(errorHandler(error));
     }
 }
 
@@ -96,9 +88,7 @@ exports.getRestaurantsByName = async (req, res, next) => {
         const restaurants = await RestaurantModel.find({ name: name });
 
         if (!restaurants) {
-            const error = new Error('No restaurants exist');
-            error.statusCode = 422;
-            next(error);
+            throw customError('No restaurants exist', 422)
         }
         res.status(200).json({
             message: 'List of restaurants',
@@ -106,10 +96,7 @@ exports.getRestaurantsByName = async (req, res, next) => {
         })
     }
     catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
+        next(errorHandler(error));
     }
 }
 
@@ -120,9 +107,7 @@ exports.giveRatings = async (req, res, next) => {
         const restaurant = await RestaurantModel.findOne({ _id: rid });
 
         if (!restaurant) {
-            const error = new Error('No restaurant with this id exist');
-            error.statusCode = 422;
-            next(error);
+            throw customError('No restaurant with this id exist', 422)
         }
 
         const r = req.body.rate;
@@ -138,10 +123,7 @@ exports.giveRatings = async (req, res, next) => {
         })
     }
     catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
+        next(errorHandler(error));
     }
 }
 
@@ -170,9 +152,19 @@ exports.searchRestaurant = async (req, res, next) => {
         })
     }
     catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
+        next(errorHandler(error));
     }
+}
+
+const customError = (msg, code) => {
+    const error = new Error(msg);
+    error.statusCode = code;
+    return error;
+}
+
+const errorHandler = (error) => {
+    if (!error.statusCode) {
+        error.statusCode = 500;
+    }
+    return error;
 }
