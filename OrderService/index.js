@@ -15,7 +15,11 @@ const StartServer = async () => {
     app.use(bodyParser.json())
 
     dbConnection();
-    
+    // axios.get('http://localhost:7000/user')
+    //     .then(function (response) {
+    //         console.log(response)
+    //     });
+
     app.use('/order', orderApi);
 
     // error handling middleware

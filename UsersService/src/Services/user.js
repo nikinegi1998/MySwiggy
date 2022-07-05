@@ -1,31 +1,35 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { validationResult } = require('express-validator');
 
 const { SECRET } = require('../Config/index');
 const { Users } = require('../Databases/index');
 const Roles = require('../Utils/roles');
 
 exports.registerUser = async (req, res, next) => {
-    const { role, email, password, phone, address } = req.body;
-
-    if (role === '')
-        role = Roles.CUSTOMER;
-
-    if ((role !== Roles.ADMIN) && (role !== Roles.CUSTOMER) &&
-        (role !== Roles.SUPERADMIN) && (role !== Roles.DELIVERY)) {
-
-        const error = new Error('Role can\'t be identified');
-        error.statusCode = 422;
-        next(error);
-    }
 
     try {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            throw customError('Validation error in register', 422)
+        }
+
+        const { role, email, password, phone, address } = req.body;
+
+        if (role === '')
+            role = Roles.CUSTOMER;
+
+        if ((role !== Roles.ADMIN) && (role !== Roles.CUSTOMER) &&
+            (role !== Roles.SUPERADMIN) && (role !== Roles.DELIVERY)) {
+
+            throw customError('Role can\'t be identified', 422)
+        }
+
         const doc = await Users.findOne({ email: email })
 
         if (doc) {
-            const error = new Error('User already exist');
-            error.statusCode = 422;
-            throw error;
+            throw customError('User already exist', 422)
         }
 
         const hashedPass = await bcrypt.hash(password, 12);
@@ -41,31 +45,31 @@ exports.registerUser = async (req, res, next) => {
         })
     }
     catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
+        next(errorHandler(error));
     }
 
 }
 
 exports.loginUser = async (req, res, next) => {
-    const { email, password } = req.body;
-
+    
     try {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            throw customError('Validation error in register', 422)
+        }
+
+        const { email, password } = req.body;
+
         const user = await Users.findOne({ email: email });
 
         if (!user) {
-            const error = new Error('Email id doesn\'t exist');
-            error.statusCode = 422;
-            throw error;
+            throw customError('Email id doesn\'t exist', 422)
         }
 
         const result = await bcrypt.compare(password, user.password);
         if (!result) {
-            const error = new Error('Incorrect password');
-            error.statusCode = 422;
-            throw error;
+            throw customError('Incorrect password', 422);
         }
 
         const token = jwt.sign({
@@ -82,10 +86,7 @@ exports.loginUser = async (req, res, next) => {
 
     }
     catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
+        next(errorHandler(error));
     }
 }
 
@@ -95,9 +96,7 @@ exports.getAllUsers = async (req, res, next) => {
         const users = await Users.find();
 
         if (!users) {
-            const error = new Error('No users exist');
-            error.statusCode = 422;
-            next(error);
+            throw customError('No users exist', 422);
         }
         res.status(200).json({
             message: 'List of users',
@@ -105,10 +104,7 @@ exports.getAllUsers = async (req, res, next) => {
         })
     }
     catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
+        next(errorHandler(error));
     }
 }
 
@@ -117,9 +113,7 @@ exports.getAllAdmins = async (req, res, next) => {
         const users = await Users.find({ role: Roles.ADMIN });
 
         if (!users) {
-            const error = new Error('No users exist');
-            error.statusCode = 422;
-            next(error);
+            throw customError('No users exist', 422);
         }
         res.status(200).json({
             message: 'List of Restaurant\'s Admin',
@@ -127,10 +121,7 @@ exports.getAllAdmins = async (req, res, next) => {
         })
     }
     catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
+        next(errorHandler(error));
     }
 }
 
@@ -141,9 +132,7 @@ exports.deleteUser = async (req, res, next) => {
         const user = await Users.findById(uid);
 
         if (!user) {
-            const error = new Error('User not exist');
-            error.statusCode = 422;
-            next(err);
+            throw customError('User not exist', 422);
         }
 
         await user.deleteOne({ _id: uid });
@@ -153,26 +142,21 @@ exports.deleteUser = async (req, res, next) => {
         })
     }
     catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
+        next(errorHandler(error));
     }
 }
 
 exports.switchRole = async (req, res, next) => {
     const uid = req.params.id;
 
-    try{
+    try {
         const user = await Users.findById(uid);
 
         if (!user) {
-            const error = new Error('User not exist');
-            error.statusCode = 422;
-            next(err);
+            throw customError('User not exist', 422);
         }
 
-        if(user.role === Roles.ADMIN)
+        if (user.role === Roles.ADMIN)
             user.role = Roles.CUSTOMER;
         else
             user.role = Roles.ADMIN;
@@ -184,9 +168,19 @@ exports.switchRole = async (req, res, next) => {
         })
     }
     catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
+        next(errorHandler(error));
     }
+}
+
+const customError = (msg, code) => {
+    const error = new Error(msg);
+    error.statusCode = code;
+    return error;
+}
+
+const errorHandler = (error) => {
+    if (!error.statusCode) {
+        error.statusCode = 500;
+    }
+    return error;
 }

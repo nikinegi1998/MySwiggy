@@ -29,23 +29,11 @@ const userSchema = new Schema({
         country: {
             type: String
         }
-    },
-    // properties:{
-    //     orders: {
-    //         type: String
-    //         // type: Schema.Types.ObjectId
-    //         // ref: 'Order'
-    //     },
-    //     ratings: {
-    //         type: Number
-    //     }
-    // admin id include here========================
-    // }
+    },    
     orders: {
-        type: String
-        // type: Schema.Types.ObjectId
-        // ref: 'Order'
+        type: Schema.Types.ObjectId
     },
+    // delivery person's rating only
     ratings: {
         rate: {
             type: Number,
@@ -58,7 +46,7 @@ const userSchema = new Schema({
             default: 1
         }
     }
-    
+
 })
 
 const Users = mongoose.model('Users', userSchema);
