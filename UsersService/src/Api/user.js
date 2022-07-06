@@ -5,6 +5,7 @@ const userServices = require('../Services/user');
 
 const router = express.Router();
 
+// create new user (super admin/ admin/ customer/ delivery)
 router.post('/register', [
     body('email', 'Please enter valid email')
         .isEmail()
@@ -21,6 +22,7 @@ router.post('/register', [
         .trim()
 ], userServices.registerUser);
 
+// login existing user (super admin/ admin/ customer/ delivery)
 router.post('/login', [
     body('email', 'Please enter a valid email id')
         .isEmail()
@@ -31,12 +33,16 @@ router.post('/login', [
         .trim()
 ], userServices.loginUser);
 
+// delete a user by super admin
 router.delete('/:id', userServices.deleteUser);
 
+// switch role (admin/ customer) by super admin
 router.patch('/role/:id', userServices.switchRole);
 
-router.get('/admin', userServices.getAllAdmins);
+// Give ratings to delivery person
+router.patch('/delivery/:delvId', userServices.updateDeliveryRating )
 
+// get all users or filter gett request with query params
 router.get('/', userServices.getAllUsers);
 
 module.exports = router;

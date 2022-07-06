@@ -1,6 +1,7 @@
 const { RestaurantModel } = require('../Databases/index');
 const mongoose = require('mongoose');
 const { validationResult } = require('express-validator');
+const axios = require('axios').default;
 
 
 exports.createRestaurant = async (req, res, next) => {
@@ -125,6 +126,18 @@ exports.giveRatings = async (req, res, next) => {
     catch (error) {
         next(errorHandler(error));
     }
+}
+
+exports.getAuth = async (req, res, next) => {
+    console.log('rest')
+    const response = await axios.get('http://localhost:7000/user/login')
+
+
+    console.log(response.data);
+    res.status(200).json({
+        message: 'fetched',
+        response: response.data
+    })
 }
 
 // ============ implement this =======================

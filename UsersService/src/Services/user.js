@@ -51,7 +51,7 @@ exports.registerUser = async (req, res, next) => {
 }
 
 exports.loginUser = async (req, res, next) => {
-    
+
     try {
         const errors = validationResult(req);
 
@@ -93,7 +93,14 @@ exports.loginUser = async (req, res, next) => {
 exports.getAllUsers = async (req, res, next) => {
 
     try {
-        const users = await Users.find();
+        const filter = req.query.type;
+
+        let users;
+
+        if (filter === Roles.ADMIN)
+            users = await Users.find({ role: Roles.ADMIN })
+        else
+            users = await Users.find();
 
         if (!users) {
             throw customError('No users exist', 422);
@@ -108,20 +115,47 @@ exports.getAllUsers = async (req, res, next) => {
     }
 }
 
-exports.getAllAdmins = async (req, res, next) => {
-    try {
-        const users = await Users.find({ role: Roles.ADMIN });
+// exports.getAllAdmins = async (req, res, next) => {
+//     try {
+//         const users = await Users.find({ role: Roles.ADMIN });
 
-        if (!users) {
-            throw customError('No users exist', 422);
-        }
+//         if (!users) {
+//             throw customError('No users exist', 422);
+//         }
+//         res.status(200).json({
+//             message: 'List of Restaurant\'s Admin',
+//             users: users
+//         })
+//     }
+//     catch (error) {
+//         next(errorHandler(error));
+//     }
+// }
+
+exports.updateDeliveryRating = async (req, res, next) => {
+    try {
+        const deliveryId = req.params.delvId;
+
+        const deliveryPerson = await Users.findOne({ _id: deliveryId });
+
+        if (!deliveryPerson)
+            throw customError('Delivery person not exist')
+
+        const r = req.body.rate;
+
+        deliveryPerson.ratings.rate *= deliveryPerson.ratings.total;
+        deliveryPerson.ratings.total += 1;
+        deliveryPerson.ratings.rate = (deliveryPerson.ratings.rate + r)/ deliveryPerson.ratings.total;
+
+        await deliveryPerson.save();
+
         res.status(200).json({
-            message: 'List of Restaurant\'s Admin',
-            users: users
+            mesaage: 'ratings updated',
+            deliveryDetails: deliveryPerson
         })
     }
     catch (error) {
-        next(errorHandler(error));
+        errorHandler(error);
     }
 }
 

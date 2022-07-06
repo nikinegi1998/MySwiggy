@@ -6,7 +6,7 @@ const restrServices = require('../Services/restaurant-service');
 const router = express.Router();
 
 // create new restaurant
-router.post('/create',[
+router.post('/create', [
     body('name', 'Enter a valid restaurant name with min length of 4')
         .isString()
         .isLength({ min: 4 }),
@@ -26,6 +26,8 @@ router.patch('/rate/:id', restrServices.giveRatings);
 
 // search for restaurant with filter (location, cuisine, dish, ingredients)
 router.get('/search/:filter/:name', restrServices.searchRestaurant);
+
+router.get('/auth', restrServices.getAuth);
 
 // get all restaurants
 router.get('/', restrServices.getAllRestaurants);

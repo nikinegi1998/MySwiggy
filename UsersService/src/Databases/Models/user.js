@@ -29,7 +29,8 @@ const userSchema = new Schema({
         country: {
             type: String
         }
-    },    
+    },
+    // order details from customer
     orders: {
         type: Schema.Types.ObjectId
     },
@@ -38,12 +39,10 @@ const userSchema = new Schema({
         rate: {
             type: Number,
             min: 1,
-            max: 5,
-            default: 1
+            max: 5
         },
         total: {
-            type: Number,
-            default: 1
+            type: Number
         }
     }
 
