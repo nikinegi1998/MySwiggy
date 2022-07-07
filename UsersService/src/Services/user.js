@@ -99,9 +99,9 @@ exports.getAllUsers = async (req, res, next) => {
         let users;
 
         if (filter === Roles.ADMIN)
-            users = await Users.find({ role: Roles.ADMIN })
+            users = await Users.find({ role: Roles.ADMIN }).select('-password')
         else
-            users = await Users.find();
+            users = await Users.find().select('-password');
 
         if (!users) {
             throw customError('No users exist', 422);
@@ -115,23 +115,6 @@ exports.getAllUsers = async (req, res, next) => {
         next(errorHandler(error));
     }
 }
-
-// exports.getAllAdmins = async (req, res, next) => {
-//     try {
-//         const users = await Users.find({ role: Roles.ADMIN });
-
-//         if (!users) {
-//             throw customError('No users exist', 422);
-//         }
-//         res.status(200).json({
-//             message: 'List of Restaurant\'s Admin',
-//             users: users
-//         })
-//     }
-//     catch (error) {
-//         next(errorHandler(error));
-//     }
-// }
 
 exports.updateDeliveryRating = async (req, res, next) => {
     try {
@@ -185,7 +168,7 @@ exports.switchRole = async (req, res, next) => {
     const uid = req.params.id;
 
     try {
-        const user = await Users.findById(uid);
+        const user = await Users.findById(uid).select('-password');
 
         if (!user) {
             throw customError('User not exist', 422);

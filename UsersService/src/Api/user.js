@@ -2,7 +2,8 @@ const express = require('express');
 const { body } = require('express-validator');
 
 const userServices = require('../Services/user');
-const isAuth = require('../Api/middlewares/is-auth');
+const { isAuth, isAuthorized } = require('../Api/middlewares/index');
+const Role = require('../../../Utils/roles');
 
 const router = express.Router();
 
@@ -34,16 +35,16 @@ router.post('/login', [
         .trim()
 ], userServices.loginUser);
 
-// delete a user by super admin
-router.delete('/:id', userServices.deleteUser);
+// delete a restaurant admin by super admin
+router.delete('/:id', isAuth, isAuthorized(Role.SUPERADMIN), userServices.deleteUser);
 
-// switch role (admin/ customer) by super admin
-router.patch('/role/:id', userServices.switchRole);
+// switch role (restaurant admin/ customer) by super admin
+router.patch('/role/:id', isAuth, isAuthorized(Role.SUPERADMIN), userServices.switchRole);
 
 // Give ratings to delivery person
-router.patch('/delivery/:delvId',  userServices.updateDeliveryRating )
+router.patch('/delivery/:delvId', isAuth, isAuthorized(Role.CUSTOMER), userServices.updateDeliveryRating)
 
-// get all users or filter gett request with query params
-router.get('/', isAuth, userServices.getAllUsers);
+// get all users or filter get request with query params
+router.get('/', isAuth, isAuthorized(Role.SUPERADMIN), userServices.getAllUsers);
 
 module.exports = router;

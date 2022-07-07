@@ -1,6 +1,7 @@
 const { customError, errorHandler } = require('../../ErrorHandler/index');
 
-module.exports = function isDelivery(role) {
+
+module.exports = function isAuthorized(role) {
     return (req, res, next) => {
 
         try {
@@ -13,6 +14,5 @@ module.exports = function isDelivery(role) {
         catch (error) {
             next(errorHandler(error))
         }
-
     }
 }
