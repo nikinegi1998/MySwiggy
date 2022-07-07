@@ -5,6 +5,7 @@ const { validationResult } = require('express-validator');
 const { SECRET } = require('../Config/index');
 const { Users } = require('../Databases/index');
 const Roles = require('../../../Utils/roles');
+const {customError, errorHandler} = require('../ErrorHandler/index');
 
 exports.registerUser = async (req, res, next) => {
 
@@ -204,17 +205,4 @@ exports.switchRole = async (req, res, next) => {
     catch (error) {
         next(errorHandler(error));
     }
-}
-
-const customError = (msg, code) => {
-    const error = new Error(msg);
-    error.statusCode = code;
-    return error;
-}
-
-const errorHandler = (error) => {
-    if (!error.statusCode) {
-        error.statusCode = 500;
-    }
-    return error;
 }

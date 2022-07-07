@@ -1,12 +1,18 @@
+const { customError, errorHandler } = require('../../ErrorHandler/index');
+
 module.exports = function isDelivery(role) {
     return (req, res, next) => {
 
-        if (req.user.role !== role) {
-            const error = new Error('Not authenticated.');
-            error.statusCode = 401;
-            next(error);
+        try {
+            if (req.user.role !== role) {
+                throw customError('Not authhorized', 403)
+            }
+
+            next();
+        }
+        catch (error) {
+            next(errorHandler(error))
         }
 
-        next();
     }
 }
