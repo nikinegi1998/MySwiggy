@@ -4,7 +4,7 @@ const { validationResult } = require('express-validator');
 
 const { SECRET } = require('../Config/index');
 const { Users } = require('../Databases/index');
-const Roles = require('../Utils/roles');
+const Roles = require('../../../Utils/roles');
 
 exports.registerUser = async (req, res, next) => {
 

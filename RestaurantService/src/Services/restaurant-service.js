@@ -64,24 +64,6 @@ exports.deleteRestaurant = async (req, res, next) => {
     }
 }
 
-exports.getAllRestaurants = async (req, res, next) => {
-
-    try {
-        const restaurants = await RestaurantModel.find();
-
-        if (!restaurants) {
-            throw customError('No restaurants exist', 422)
-        }
-        res.status(200).json({
-            message: 'List of restaurants',
-            restaurants: restaurants
-        })
-    }
-    catch (error) {
-        next(errorHandler(error));
-    }
-}
-
 exports.getRestaurantsByName = async (req, res, next) => {
     const name = req.params.name;
 
@@ -129,15 +111,44 @@ exports.giveRatings = async (req, res, next) => {
 }
 
 exports.getAuth = async (req, res, next) => {
-    console.log('rest')
-    const response = await axios.get('http://localhost:7000/user/login')
 
+    try {
+        const authHeader = req.get('Authorization');
+        if(!authHeader)
+            customError('Not authenticated', 401);
 
-    console.log(response.data);
-    res.status(200).json({
-        message: 'fetched',
-        response: response.data
-    })
+        console.log(authHeader)
+        const response = await axios.get('http://localhost:7000/user', {
+            headers:
+                { Authorization: authHeader }
+        })
+
+        console.log(response.data);
+        res.status(200).json({
+            message: 'fetched'
+        })
+    }
+    catch (error) {
+        next(errorHandler(error))
+    }
+}
+
+exports.getAllRestaurants = async (req, res, next) => {
+
+    try {
+        const restaurants = await RestaurantModel.find();
+
+        if (!restaurants) {
+            throw customError('No restaurants exist', 422)
+        }
+        res.status(200).json({
+            message: 'List of restaurants',
+            restaurants: restaurants
+        })
+    }
+    catch (error) {
+        next(errorHandler(error));
+    }
 }
 
 // ============ implement this =======================

@@ -2,6 +2,7 @@ const express = require('express');
 const { body } = require('express-validator');
 
 const userServices = require('../Services/user');
+const isAuth = require('../Api/middlewares/is-auth');
 
 const router = express.Router();
 
@@ -40,9 +41,9 @@ router.delete('/:id', userServices.deleteUser);
 router.patch('/role/:id', userServices.switchRole);
 
 // Give ratings to delivery person
-router.patch('/delivery/:delvId', userServices.updateDeliveryRating )
+router.patch('/delivery/:delvId',  userServices.updateDeliveryRating )
 
 // get all users or filter gett request with query params
-router.get('/', userServices.getAllUsers);
+router.get('/', isAuth, userServices.getAllUsers);
 
 module.exports = router;

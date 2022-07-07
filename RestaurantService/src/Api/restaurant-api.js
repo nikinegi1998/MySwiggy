@@ -2,6 +2,7 @@ const express = require('express');
 const { body } = require('express-validator');
 
 const restrServices = require('../Services/restaurant-service');
+const isAuth = require('../Api/middlewares/is-auth');
 
 const router = express.Router();
 
@@ -16,7 +17,7 @@ router.post('/create', [
 ], restrServices.createRestaurant);
 
 // get restaurant by name
-router.get('/:name', restrServices.getRestaurantsByName);
+router.get('/list/:name', restrServices.getRestaurantsByName);
 
 // delete restaurant
 router.delete('/:id', restrServices.deleteRestaurant);
@@ -27,9 +28,9 @@ router.patch('/rate/:id', restrServices.giveRatings);
 // search for restaurant with filter (location, cuisine, dish, ingredients)
 router.get('/search/:filter/:name', restrServices.searchRestaurant);
 
-router.get('/auth', restrServices.getAuth);
+router.get('/authen', restrServices.getAuth);
 
 // get all restaurants
-router.get('/', restrServices.getAllRestaurants);
+router.get('/', isAuth, restrServices.getAllRestaurants);
 
 module.exports = router;
