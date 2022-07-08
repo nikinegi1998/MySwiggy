@@ -2,6 +2,8 @@ const express = require('express');
 const { body } = require('express-validator');
 
 const menuServices = require('../Services/menu-service');
+const { isAuth, isAuthorized } = require('./middlewares/index');
+const Roles = require('../../../Utils/roles');
 
 const router = express.Router();
 
@@ -23,18 +25,18 @@ router.post('/create/:rid/menu', [
         .isNumeric(),
     body('availability', 'Enter amount of dish available')
         .isNumeric()
-], menuServices.createCuisine);
+], isAuth, isAuthorized(Roles.ADMIN), menuServices.createCuisine);
 
 // delete a cuisine from restaurant 
-router.delete('/delete/:rid/:menuId', menuServices.deleteCuisine);
+router.delete('/delete/:rid/:menuId',isAuth, isAuthorized(Roles.ADMIN),  menuServices.deleteCuisine);
 
 // get all the cuisines of a restaurant
-router.get('/:rid', menuServices.getAllCuisinesOfRestaurant);
+router.get('/:rid', isAuth, menuServices.getAllCuisinesOfRestaurant);
 
 // --------------------- DISHES ----------------------------
 
 // create dish in a cuisine
-router.post('/create/:menuId', [
+router.post('/create/:rid/:menuId', [
     body('name', 'Enter a valid dish name with min length of 4')
         .isString()
         .isLength({ min: 4 }),
@@ -47,16 +49,16 @@ router.post('/create/:menuId', [
         .isNumeric(),
     body('availability', 'Enter amount of dish available')
         .isNumeric()
-], menuServices.createDish)
+], isAuth, isAuthorized(Roles.ADMIN), menuServices.createDish)
 
 // update dish in a cuisine
-router.post('/:menuId/:dishId', menuServices.updateDish);
+router.post('/:menuId/:dishId', isAuth, isAuthorized(Roles.ADMIN), menuServices.updateDish);
 
 // delete dish in a cuisine
-router.delete('/:menuId/dish/:dId', menuServices.deleteDish);
+router.delete('/:menuId/dish/:dId', isAuth, isAuthorized(Roles.ADMIN), menuServices.deleteDish);
 
 // get all dishes of a cuisine
-router.patch('/cuisine/:menuId', menuServices.getDishes);
+router.patch('/cuisine/:menuId', isAuth, menuServices.getDishes);
 
 module.exports = router;
 

@@ -1,6 +1,7 @@
 const { MenuModel, RestaurantModel } = require('../Databases/index');
 const uuid = require('uuid');
 const { validationResult } = require('express-validator');
+const { customError, errorHandler } = require('../ErrorHandler/index');
 
 /**
  * creates new cuisine 
@@ -9,7 +10,7 @@ const { validationResult } = require('express-validator');
  * @param {Function} next to make a call to next middleware
  */
 exports.createCuisine = async (req, res, next) => {
-    
+
     try {
         const errors = validationResult(req);
 
@@ -26,23 +27,24 @@ exports.createCuisine = async (req, res, next) => {
             throw customError('Restaurant doesn\'t exist', 422);
         }
 
-        const { cuisine, name, ingredients, veg, price, availability } = req.body;
+        const check = restaurant.admins.find(elem => elem._id === req.user._id)
+        // console.log(check);
+
+        if (!check)
+            throw customError('Restaurant does not have this admin', 404)
+
+        const { cuisine } = req.body;
 
         const menu = new MenuModel({
-            cuisine,
-            dishes: {
-                dishId: uuid.v4(),
-                name, ingredients, veg, price, availability
-            }
+            cuisine
         })
 
         await menu.save();
 
-        restaurant.menus.push(menu);
         await restaurant.save();
 
         res.status(200).json({
-            mesaage: 'New menu created',
+            mesaage: 'New cuisine created',
             restaurant: restaurant
         })
     }
@@ -66,8 +68,15 @@ exports.deleteCuisine = async (req, res, next) => {
         const menu = MenuModel.findById(menuId);
 
         if (!menu) {
-            throw customError('Menu doesn\'t exist',422);
+            throw customError('Cuisine doesn\'t exist', 422);
         }
+
+        const check = restaurant.admins.find(elem => elem._id === req.user._id)
+        // console.log(check);
+
+        if (!check)
+            throw customError('Restaurant does not have this admin', 404)
+
 
         await MenuModel.deleteOne({ _id: menuId });
 
@@ -76,7 +85,7 @@ exports.deleteCuisine = async (req, res, next) => {
         restaurant.save();
 
         res.status(200).json({
-            mesaage: 'Menu deleted!',
+            mesaage: 'Cuisine deleted!',
             restaurant: restaurant
         })
     }
@@ -110,20 +119,36 @@ exports.getAllCuisinesOfRestaurant = async (req, res, next) => {
 }
 
 exports.createDish = async (req, res, next) => {
-    
+
     try {
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
             throw customError('Validation error in register', 422)
         }
-        
+
+        const rid = req.params.rid;
+
+        const restaurant = await RestaurantModel.findById(rid)
+            .populate('menus').exec();
+
+        if (!restaurant) {
+            throw customError('Restaurant doesn\'t exist', 422);
+        }
+
         const menuId = req.params.menuId;
 
         const cuisine = await MenuModel.findById(menuId);
         if (!cuisine) {
             throw customError('cuisine doesn\'t exist', 422)
         }
+
+        const check = restaurant.admins.find(elem => elem._id === req.user._id)
+        // console.log(check);
+
+        if (!check)
+            throw customError('Restaurant does not have this admin', 404)
+
 
         const { name, ingredients, veg, price, availability } = req.body;
 
@@ -155,7 +180,7 @@ exports.updateDish = async (req, res, next) => {
         const dId = req.params.dishId;
 
         const dishIndex = cuisine.dishes.findIndex(val => val.dishId == dId);
-        if(dishIndex == -1){
+        if (dishIndex == -1) {
             throw customError('Dish doesn\'t exist', 422);
         }
 
@@ -188,7 +213,7 @@ exports.deleteDish = async (req, res, next) => {
         const dId = req.params.dishId;
 
         const dishes = cuisine.dishes.filter(val => val.dishId != dId);
-        
+
         await cuisine.save();
 
         res.status(200).json({
@@ -220,17 +245,4 @@ exports.getDishes = async (req, res, next) => {
         next(errorHandler(error));
     }
 
-}
-
-const customError = (msg, code) => {
-    const error = new Error(msg);
-    error.statusCode = code;
-    return error;
-}
-
-const errorHandler = (error) => {
-    if (!error.statusCode) {
-        error.statusCode = 500;
-    }
-    return error;
 }
