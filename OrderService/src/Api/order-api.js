@@ -2,6 +2,8 @@ const express = require('express');
 const { body } = require('express-validator');
 
 const orderServices = require('../Services/order-service');
+const { isAuth, isAuthorized } = require('./middlewares/index')
+const Roles = require('../../../Utils/roles');
 
 const router = express.Router();
 
@@ -12,18 +14,18 @@ router.post('/create', [
         .isLength({ min: 4 }),
     body('price', 'Enter valid price of the dish')
         .isNumeric()
-], orderServices.createOrder);
+], isAuth, isAuthorized(Roles.CUSTOMER), orderServices.createOrder);
 
 // fetch order status by customer
-router.get('/:orderId', orderServices.getOrderStatus);
+router.get('/:orderId', isAuth, isAuthorized(Roles.CUSTOMER), orderServices.getOrderStatus);
 
 // change delivery status by deliver boy/girl
-router.patch('/deliverystatus/:orderId', orderServices.updateDeliveryStatus);
+router.patch('/deliverystatus/:orderId', isAuth, isAuthorized(Roles.DELIVERY), orderServices.updateDeliveryStatus);
 
 // change order status by admin
-router.patch('/orderstatus/:orderId', orderServices.updateOrderStatus);
+router.patch('/orderstatus/:orderId', isAuth, isAuthorized(Roles.ADMIN), orderServices.updateOrderStatus);
 
 // cancel or delete order by customer
-router.delete('/:orderId', orderServices.deleteOrder);
+router.delete('/:orderId', isAuth, isAuthorized(Roles.CUSTOMER), orderServices.deleteOrder);
 
 module.exports = router;

@@ -1,6 +1,8 @@
+const axios = require('axios');
 const { Orders } = require('../Databases/index');
 const Delivery = require('../Utils/delivery');
 const { validationResult } = require('express-validator');
+const { customError, errorHandler } = require('../ErrorHandler/index');
 
 exports.createOrder = async (req, res, next) => {
 
@@ -10,12 +12,12 @@ exports.createOrder = async (req, res, next) => {
         if (!errors.isEmpty()) {
             throw customError('Validation error in register', 422)
         }
-        
-        const { name, price, customerId } = req.body;
+
+        const { name, price } = req.body;
 
         const order = new Orders({
             dishes: [{ name: name, price: price }],
-            customerDetails: customerId,
+            customerDetails: req.user,
             orderStatus: false
         })
 
@@ -75,6 +77,12 @@ exports.updateDeliveryStatus = async (req, res, next) => {
             throw customError('No such order exist', 422)
         }
 
+        if (!order.deliveryPartner)
+            order.deliveryPartner = req.user;
+
+        if (order.deliveryPartner !== req.user)
+            throw customError('Unauthorized delivery person', 403)
+
         const orderSts = order.deliveryStatus;
 
         if (orderSts === Delivery.OnTheWay) {
@@ -122,6 +130,7 @@ exports.updateOrderStatus = async (req, res, next) => {
         else {
             order.orderStatus = false;
             order.deliveryStatus = '';
+            order.deliveryPartner = '';
         }
 
         await order.save()
@@ -148,6 +157,9 @@ exports.deleteOrder = async (req, res, next) => {
             throw customError('No such order exist', 422)
         }
 
+        if(order.customerDetails !== req.user)
+            throw customError('Not authorized to cancel the order', 403)
+
         const orderSts = order.deliveryStatus;
 
         if ((orderSts === Delivery.Reached) ||
@@ -166,18 +178,4 @@ exports.deleteOrder = async (req, res, next) => {
         next(errorHandler(error));
     }
 
-}
-
-
-const customError = (msg, code) => {
-    const error = new Error(msg);
-    error.statusCode = code;
-    return error;
-}
-
-const errorHandler = (error) => {
-    if (!error.statusCode) {
-        error.statusCode = 500;
-    }
-    return error
 }

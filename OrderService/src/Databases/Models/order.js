@@ -14,7 +14,7 @@ const orderSchema = new Schema({
         }
     }],
     customerDetails:{
-        type: Schema.Types.ObjectId,
+        type: Object,
         required: true
     },
     orderStatus:{
@@ -22,7 +22,7 @@ const orderSchema = new Schema({
         required: true
     },
     deliveryPartner:{
-        type: Schema.Types.ObjectId,
+        type: Object,
         required: true
     },
     deliveryStatus:{
