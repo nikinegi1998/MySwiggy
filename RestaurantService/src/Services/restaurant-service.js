@@ -1,7 +1,8 @@
 const { RestaurantModel } = require('../Databases/index');
-const mongoose = require('mongoose');
+
 const { validationResult } = require('express-validator');
 const axios = require('axios').default;
+const {customError, errorHandler} = require('../ErrorHandler/index')
 
 
 exports.createRestaurant = async (req, res, next) => {
@@ -44,7 +45,7 @@ exports.createRestaurant = async (req, res, next) => {
 }
 
 exports.deleteRestaurant = async (req, res, next) => {
-    const rid = req.params.id;
+    const rid = req.params.rId;
 
     try {
         const restaurant = await RestaurantModel.findById(rid);
@@ -64,18 +65,39 @@ exports.deleteRestaurant = async (req, res, next) => {
     }
 }
 
-exports.getRestaurantsByName = async (req, res, next) => {
-    const name = req.params.name;
+exports.deleteAdminFromRestaurant = async (req, res, next) => {
+    const rId = req.params.rId;
 
     try {
-        const restaurants = await RestaurantModel.find({ name: name });
+        const restaurant = await RestaurantModel.findById(rId);
 
-        if (!restaurants) {
-            throw customError('No restaurants exist', 422)
+        if (!restaurant) {
+            throw customError('Restaurant not exist', 422)
         }
+
+        const authHeader = req.get('Authorization')
+
+        const adminId = req.params.adminId;
+        const response = await axios.get('http://localhost:7000/user?type=admin', {
+            headers: {
+                Authorization: authHeader
+            }
+        })
+
+        const admin = await response.data.users.find((elem) => elem._id === adminId)
+
+        if (!admin)
+            throw customError('Admin does not exist')
+
+        const result = restaurant.admins.find(elem => elem._id !== admin._id)
+
+
+        restaurant.admins = result;
+        await restaurant.save()
+
         res.status(200).json({
-            message: 'List of restaurants',
-            restaurants: restaurants
+            message: 'Admin deleted',
+            restaurant: restaurant
         })
     }
     catch (error) {
@@ -84,7 +106,7 @@ exports.getRestaurantsByName = async (req, res, next) => {
 }
 
 exports.giveRatings = async (req, res, next) => {
-    const rid = req.params.id;
+    const rid = req.params.rId;
 
     try {
         const restaurant = await RestaurantModel.findOne({ _id: rid });
@@ -110,33 +132,17 @@ exports.giveRatings = async (req, res, next) => {
     }
 }
 
-exports.getAuth = async (req, res, next) => {
-
-    try {
-        const authHeader = req.get('Authorization');
-        if(!authHeader)
-            customError('Not authenticated', 401);
-
-        console.log(authHeader)
-        const response = await axios.get('http://localhost:7000/user', {
-            headers:
-                { Authorization: authHeader }
-        })
-
-        console.log(response.data);
-        res.status(200).json({
-            message: 'fetched'
-        })
-    }
-    catch (error) {
-        next(errorHandler(error))
-    }
-}
-
 exports.getAllRestaurants = async (req, res, next) => {
 
     try {
-        const restaurants = await RestaurantModel.find();
+        const filter = req.query.name;
+
+        let restaurants;
+
+        if (!filter)
+            restaurants = await RestaurantModel.find();
+        else
+            restaurants = await RestaurantModel.find({ name: filter })
 
         if (!restaurants) {
             throw customError('No restaurants exist', 422)
@@ -151,44 +157,88 @@ exports.getAllRestaurants = async (req, res, next) => {
     }
 }
 
-// ============ implement this =======================
+exports.addAdmin = async (req, res, next) => {
+    try {
+        const rId = req.params.rId;
+        const restaurant = await RestaurantModel.findById(rId)
+
+        if (!restaurant)
+            throw customError('Restaurant not exist', 422)
+
+
+        const authHeader = req.get('Authorization')
+
+        const adminId = req.params.adminId;
+        const response = await axios.get('http://localhost:7000/user?type=admin', {
+            headers: {
+                Authorization: authHeader
+            }
+        })
+
+        const admin = await response.data.users.find((elem) => elem._id === adminId)
+
+        if (!admin)
+            throw customError('Admin does not exist')
+
+        if (restaurant.admins.find(elem => elem._id === admin._id))
+            throw customError('Admin already exist', 422)
+
+        restaurant.admins.push(admin);
+
+        await restaurant.save()
+
+        res.status(200).json({ message: 'Admin added', restaurant: restaurant })
+    }
+    catch (error) {
+        next(errorHandler(error))
+    }
+}
+
 exports.searchRestaurant = async (req, res, next) => {
-    const filter = req.params.filter;
+    const filter = req.query.filter;
+    const value = req.query.value;
 
     try {
+        let restaurants;
 
         switch (filter) {
             case 'location': {
+                restaurants = await RestaurantModel.find({
+                    $or: [
+                        { filter: { 'regex': value, $options: 'i' } }
+                    ]
+                }).populate('menus').exec()
                 break;
             }
             case 'cuisine': {
+                restaurants = await RestaurantModel.menus.filter(elem => {
+                    elem.cuisine === value
+                }).populate('menus').exec()
                 break;
             }
             case 'dish': {
+                restaurants = await RestaurantModel.menus.dishes.fiter(elem => {
+                    elem.name === value
+                }).populate('menus').exec()
                 break;
             }
             case 'ingredients': {
+                restaurants = await RestaurantModel.menus.dishes.ingredients.filter(elem => {
+                    elem === value
+                }).populate('menus').exec()
                 break;
             }
         }
+
+        if(!restaurants)
+            customError('No results found')
+
         res.status(200).json({
-            message: 'Ratings saved for restaurant'
+            message: 'Ratings saved for restaurant',
+            restaurants: restaurants
         })
     }
     catch (error) {
         next(errorHandler(error));
     }
-}
-
-const customError = (msg, code) => {
-    const error = new Error(msg);
-    error.statusCode = code;
-    return error;
-}
-
-const errorHandler = (error) => {
-    if (!error.statusCode) {
-        error.statusCode = 500;
-    }
-    return error;
 }

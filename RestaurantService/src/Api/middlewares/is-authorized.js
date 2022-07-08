@@ -6,7 +6,7 @@ module.exports = function isAuthorized(role) {
 
         try {
             if (req.user.role !== role) {
-                throw customError('Not authhorized', 403)
+                throw customError('Not authorized', 403)
             }
 
             next();

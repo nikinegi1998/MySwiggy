@@ -99,9 +99,9 @@ exports.getAllUsers = async (req, res, next) => {
         let users;
 
         if (filter === Roles.ADMIN)
-            users = await Users.find({ role: Roles.ADMIN }).select('-password')
+            users = await Users.find({ role: Roles.ADMIN }).select('-password').select('-ratings').select('-role');
         else
-            users = await Users.find().select('-password');
+            users = await Users.find().select('-password').select('-ratings');
 
         if (!users) {
             throw customError('No users exist', 422);

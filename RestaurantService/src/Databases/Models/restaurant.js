@@ -16,13 +16,16 @@ const restaurantSchema = new Schema({
             type: Number,
             min: 1,
             max: 5,
-            default: 1
+            default: 0
         },
         total: {
             type: Number,
-            default: 1
+            default: 0
         }
     },
+    admins: [{
+        type: Object
+    }],
     menus: [{
         type: Schema.Types.ObjectId,
         ref: 'Menu'

@@ -39,10 +39,12 @@ const userSchema = new Schema({
         rate: {
             type: Number,
             min: 1,
-            max: 5
+            max: 5,
+            default: 0
         },
         total: {
-            type: Number
+            type: Number,
+            default: 0
         }
     }
 

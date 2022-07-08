@@ -2,12 +2,16 @@ const express = require('express');
 const { body } = require('express-validator');
 
 const restrServices = require('../Services/restaurant-service');
-const isAuth = require('../Api/middlewares/is-auth');
+const {isAuth, isAuthorized} = require('../Api/middlewares/index');
+const Roles = require('../../../Utils/roles');
 
 const router = express.Router();
 
+// adds a new admin to restaurant
+router.patch('/create/:rId/:adminId', isAuth, isAuthorized(Roles.SUPERADMIN), restrServices.addAdmin)
+
 // create new restaurant
-router.post('/create', [
+router.post('/create', isAuth, isAuthorized(Roles.SUPERADMIN), [
     body('name', 'Enter a valid restaurant name with min length of 4')
         .isString()
         .isLength({ min: 4 }),
@@ -16,21 +20,26 @@ router.post('/create', [
         .isLength({ min: 4 }),
 ], restrServices.createRestaurant);
 
-// get restaurant by name
-router.get('/list/:name', restrServices.getRestaurantsByName);
+// delete admin from restaurant
+router.delete('/:rId/:adminId', isAuth, isAuthorized(Roles.SUPERADMIN), restrServices.deleteAdminFromRestaurant)
 
 // delete restaurant
-router.delete('/:id', restrServices.deleteRestaurant);
+router.delete('/:rId', isAuth, isAuthorized(Roles.SUPERADMIN), restrServices.deleteRestaurant);
 
 //  give ratings for restaurant
-router.patch('/rate/:id', restrServices.giveRatings);
+router.patch('/rate/:rId', isAuth, isAuthorized(Roles.CUSTOMER), restrServices.giveRatings);
 
 // search for restaurant with filter (location, cuisine, dish, ingredients)
-router.get('/search/:filter/:name', restrServices.searchRestaurant);
+// ? filter & value
+router.get('/search', restrServices.searchRestaurant);
 
-router.get('/authen', restrServices.getAuth);
-
-// get all restaurants
-router.get('/', isAuth, restrServices.getAllRestaurants);
+// get all restaurants or get restaurant by name using query parameter
+router.get('/', restrServices.getAllRestaurants);
 
 module.exports = router;
+
+
+
+// Shortcuts:----------------
+// rId : Restaurant id
+// adminId: Admin id
