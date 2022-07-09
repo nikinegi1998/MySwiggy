@@ -7,6 +7,9 @@ const { Users } = require('../Databases/index');
 const Roles = require('../../../Utils/roles');
 const { customError, errorHandler } = require('../ErrorHandler/index');
 
+const itemsPerPage = 5;
+
+
 exports.registerUser = async (req, res, next) => {
 
     try {
@@ -17,7 +20,7 @@ exports.registerUser = async (req, res, next) => {
         }
 
         const { role, email, password, phone, address } = req.body;
-        
+
         if (role === '')
             role = Roles.CUSTOMER;
 
@@ -34,7 +37,7 @@ exports.registerUser = async (req, res, next) => {
         }
 
         const hashedPass = await bcrypt.hash(password, 12);
-        
+
         const user = new Users({
             role, email, password: hashedPass, phone, address
         })
@@ -95,20 +98,29 @@ exports.getAllUsers = async (req, res, next) => {
 
     try {
         const filter = req.query.type;
+        const currentPage = req.query.page || 1;
+        
+        const totalUsers = await Users.find().countDocuments()
 
         let users;
 
         if (filter === Roles.ADMIN)
-            users = await Users.find({ role: Roles.ADMIN }).select('-password').select('-ratings').select('-role');
+            users = await Users.find({ role: Roles.ADMIN })
+                .select('-password').select('-ratings').select('-role')
+                .skip((currentPage - 1) * itemsPerPage).limit(itemsPerPage);
         else
-            users = await Users.find().select('-password').select('-ratings');
+            users = await Users.find().select('-password').select('-ratings')
+                .skip((currentPage - 1) * itemsPerPage).limit(itemsPerPage);
 
         if (!users) {
             throw customError('No users exist', 422);
         }
+
+
         res.status(200).json({
             message: 'List of users',
-            users: users
+            users: users,
+            totalUsers: totalUsers
         })
     }
     catch (error) {

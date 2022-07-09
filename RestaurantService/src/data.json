@@ -1,7 +1,455 @@
 [
     {
+        "name": "Faasos - Wraps & Rolls",
+        "location": "Ahmedabad",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Burger King",
+        "location": "Rohini",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "HIIT Meals",
+        "location": "Vishala",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Jalaram Parotha House",
+        "location": "Paldi",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Burger King",
+        "location": "Rohini",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Sugarless Life",
+        "location": "Navrangpura",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "KFC",
+        "location": "Paldi & Ambawadi",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "McDonald's",
+        "location": "Rohini",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Apna Fal",
+        "location": "Jodhpur Tekra",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Magic Chicken",
+        "location": "Lal Darwaza",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Spice Zone",
+        "location": "Ellisbridge",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Hari Om Chole Puri",
+        "location": "Ellisbridge",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "La Pinoz Pizza",
+        "location": "Paldi & Ambawadi",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "JUMBO BOX",
+        "location": "Paldi & Ambawadi",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Chai G",
+        "location": "Paldi",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Cafe Coffee Day",
+        "location": "Rohini",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Subway",
+        "location": "Navrangpura",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Meal station",
+        "location": "Malviya Nagar",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Dana Panee",
+        "location": "Dana Panee",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Sea Food Kitchen",
+        "location": "Hamidpur",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Bread box Sandesh Press",
+        "location": "Janakpuri",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "The Chess Cafe",
+        "location": "Vastrapur",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "The Biryani Life",
+        "location": "Rohini",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "LunchBox",
+        "location": "Rohini",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "China Town Kathi Rolls",
+        "location": "Rohini sector-9",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Moms Kitchen        ",
+        "location": "Paschim Vihar",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Sagar Ratna        ",
+        "location": "Pitampura",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "The Waffle Co.        ",
+        "location": "Rohini sector-14",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "M2M momos",
+        "location": "Paschim Vihar",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "THE BURGER BISTRO       ",
+        "location": "Rohini",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Grills And Buns        ",
+        "location": "Paschim Vihar",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Dunkin Donuts        ",
+        "location": "Tilak Nagar",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Empress Delhi        ",
+        "location": "Tagore Garden Extension        ",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Murthal Xpress        ",
+        "location": "Tagore Garden Extension",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "KFC",
+        "location": "Lnt Mall Musarambagh        ",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Spicy Hub        ",
+        "location": "Kothapet        ",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
         "name": "",
-        "location": "",
+        "location": "Rohini",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Ohri's Cake Nation        ",
+        "location": "Adarsh Nagar        ",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Euphoria        ",
+        "location": "Adikmet        ",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "SPECIAL CAKES        ",
+        "location": "New Gayatri Nagar        ",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Crystaline        ",
+        "location": "Ballygunge        ",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "The Masala Club        ",
+        "location": "Kalighat        ",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Swirls        ",
+        "location": "Bidhannagar        ",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Chang's Combos        ",
+        "location": "Bidhannagar        ",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Famous Chinese        ",
+        "location": "Santacruz East        ",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Kripa Sagar Pure Veg Restaurant        ",
+        "location": "Santacruz East ",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Wow! momo        ",
+        "location": "Saki Naka",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Chinesezilla        ",
+        "location": "Andheri East        ",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "SAGAR KITCHEN By Sagar Caterers        ",
+        "location": "Bkc",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "RED BOX CHINESE        ",
+        "location": "Bkc",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Red Hot Chinese Center        ",
+        "location": "Sadar Bazaar        ",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Le Plaisir        ",
+        "location": "Deccan Gymkhana        ",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Hotel Rajwadi Thal        ",
+        "location": "Athwa",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Juice Factory        ",
+        "location": "Athwa",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Raja Omelette 2        ",
+        "location": "Amroli",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "Dr Pizza & Foods        ",
+        "location": "Nana Varachha        ",
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "name": "La Milano Pizzeria        ",
+        "location": "Varachha",
         "ratings": {
             "rate": 0,
             "total": 0
