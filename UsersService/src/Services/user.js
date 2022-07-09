@@ -5,7 +5,7 @@ const { validationResult } = require('express-validator');
 const { SECRET } = require('../Config/index');
 const { Users } = require('../Databases/index');
 const Roles = require('../../../Utils/roles');
-const {customError, errorHandler} = require('../ErrorHandler/index');
+const { customError, errorHandler } = require('../ErrorHandler/index');
 
 exports.registerUser = async (req, res, next) => {
 
@@ -17,7 +17,7 @@ exports.registerUser = async (req, res, next) => {
         }
 
         const { role, email, password, phone, address } = req.body;
-
+        
         if (role === '')
             role = Roles.CUSTOMER;
 
@@ -34,7 +34,7 @@ exports.registerUser = async (req, res, next) => {
         }
 
         const hashedPass = await bcrypt.hash(password, 12);
-
+        
         const user = new Users({
             role, email, password: hashedPass, phone, address
         })
@@ -129,7 +129,7 @@ exports.updateDeliveryRating = async (req, res, next) => {
 
         deliveryPerson.ratings.rate *= deliveryPerson.ratings.total;
         deliveryPerson.ratings.total += 1;
-        deliveryPerson.ratings.rate = (deliveryPerson.ratings.rate + r)/ deliveryPerson.ratings.total;
+        deliveryPerson.ratings.rate = (deliveryPerson.ratings.rate + r) / deliveryPerson.ratings.total;
 
         await deliveryPerson.save();
 

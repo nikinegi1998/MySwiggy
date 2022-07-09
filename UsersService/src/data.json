@@ -1,0 +1,526 @@
+[
+    {
+        "role": "superadmin",
+        "email": "super1@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "superadmin",
+        "email": "super2@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Delhi",
+            "country": "India"
+        }
+    },
+    {
+        "role": "superadmin",
+        "email": "super3@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Delhi",
+            "country": "India"
+        }
+    },
+    {
+        "role": "superadmin",
+        "email": "super4@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "admin",
+        "email": "admin1@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Delhi",
+            "country": "India"
+        }
+    },
+    {
+        "role": "admin",
+        "email": "admin2@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "admin",
+        "email": "admin3@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "admin",
+        "email": "admin4@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "admin",
+        "email": "admin5@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "admin",
+        "email": "admin6@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "admin",
+        "email": "admin7@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "admin",
+        "email": "admin8@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "admin",
+        "email": "admin9@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "admin",
+        "email": "admin10@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "customer",
+        "email": "cust1@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "customer",
+        "email": "cust2@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "customer",
+        "email": "cust3@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "customer",
+        "email": "cust4@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "customer",
+        "email": "cust5@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "customer",
+        "email": "cust6@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "customer",
+        "email": "cust7@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "customer",
+        "email": "cust8@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "customer",
+        "email": "cust9@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "customer",
+        "email": "cust10@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "customer",
+        "email": "cust11@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "customer",
+        "email": "cust12@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "customer",
+        "email": "cust13@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "customer",
+        "email": "cust14@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "customer",
+        "email": "cust15@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "customer",
+        "email": "cust16@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "customer",
+        "email": "cust17@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "customer",
+        "email": "cust18@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "customer",
+        "email": "cust19@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "customer",
+        "email": "cust20@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        }
+    },
+    {
+        "role": "delivery",
+        "email": "delv1@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        },
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "role": "delivery",
+        "email": "delv2@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        },
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "role": "delivery",
+        "email": "delv3@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        },
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "role": "delivery",
+        "email": "delv4@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        },
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "role": "delivery",
+        "email": "delv5@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        },
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "role": "delivery",
+        "email": "delv6@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        },
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "role": "delivery",
+        "email": "delv7@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        },
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "role": "delivery",
+        "email": "delv8@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        },
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "role": "delivery",
+        "email": "delv9@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        },
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    },
+    {
+        "role": "delivery",
+        "email": "delv10@gmail.com",
+        "password": "12345",
+        "phone": 1234567890,
+        "address": {
+            "street": "N-2 Sector-125",
+            "city": "Banglore",
+            "country": "India"
+        },
+        "ratings": {
+            "rate": 0,
+            "total": 0
+        }
+    }
+]
