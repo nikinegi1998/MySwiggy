@@ -2,7 +2,7 @@ const { RestaurantModel } = require('../Databases/index');
 
 const { validationResult } = require('express-validator');
 const axios = require('axios').default;
-const {customError, errorHandler} = require('../ErrorHandler/index')
+const { customError, errorHandler } = require('../ErrorHandler/index')
 
 
 exports.createRestaurant = async (req, res, next) => {
@@ -135,21 +135,30 @@ exports.giveRatings = async (req, res, next) => {
 exports.getAllRestaurants = async (req, res, next) => {
 
     try {
+        const currentPage = req.query.page || 1;
+        const itemsPerPage = 5;
         const filter = req.query.name;
+
+        const totalRestaurants = await RestaurantModel.find().countDocuments()
 
         let restaurants;
 
         if (!filter)
-            restaurants = await RestaurantModel.find();
+            restaurants = await RestaurantModel.find()
+                .skip((currentPage - 1) * itemsPerPage)
+                .limit(itemsPerPage);
         else
             restaurants = await RestaurantModel.find({ name: filter })
+                .skip((currentPage - 1) * itemsPerPage)
+                .limit(itemsPerPage)
 
         if (!restaurants) {
             throw customError('No restaurants exist', 422)
         }
         res.status(200).json({
             message: 'List of restaurants',
-            restaurants: restaurants
+            restaurants: restaurants,
+            totalRestaurants: totalRestaurants
         })
     }
     catch (error) {
@@ -195,10 +204,13 @@ exports.addAdmin = async (req, res, next) => {
 }
 
 exports.searchRestaurant = async (req, res, next) => {
-    const filter = req.query.filter;
-    const value = req.query.value;
 
     try {
+        const currentPage = req.query.page || 1;
+        const itemsPerPage = 5;
+        const filter = req.query.filter;
+        const value = req.query.value;
+
         let restaurants;
 
         switch (filter) {
@@ -207,30 +219,34 @@ exports.searchRestaurant = async (req, res, next) => {
                     $or: [
                         { filter: { 'regex': value, $options: 'i' } }
                     ]
-                }).populate('menus').exec()
+                }).skip((currentPage - 1) * itemsPerPage)
+                    .limit(itemsPerPage).populate('menus').exec()
                 break;
             }
             case 'cuisine': {
                 restaurants = await RestaurantModel.menus.filter(elem => {
                     elem.cuisine === value
-                }).populate('menus').exec()
+                }).skip((currentPage - 1) * itemsPerPage)
+                    .limit(itemsPerPage).populate('menus').exec()
                 break;
             }
             case 'dish': {
                 restaurants = await RestaurantModel.menus.dishes.fiter(elem => {
                     elem.name === value
-                }).populate('menus').exec()
+                }).skip((currentPage - 1) * itemsPerPage)
+                    .limit(itemsPerPage).populate('menus').exec()
                 break;
             }
             case 'ingredients': {
                 restaurants = await RestaurantModel.menus.dishes.ingredients.filter(elem => {
                     elem === value
-                }).populate('menus').exec()
+                }).skip((currentPage - 1) * itemsPerPage)
+                    .limit(itemsPerPage).populate('menus').exec()
                 break;
             }
         }
 
-        if(!restaurants)
+        if (!restaurants)
             customError('No results found')
 
         res.status(200).json({

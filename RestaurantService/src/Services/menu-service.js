@@ -96,20 +96,25 @@ exports.deleteCuisine = async (req, res, next) => {
 }
 
 exports.getAllCuisinesOfRestaurant = async (req, res, next) => {
-    const rid = req.params.rid;
 
     try {
+        const rid = req.params.rid;
+        const currentPage = req.query.page || 1;
+        const itemsPerPage = 5;
+
         const restaurant = await RestaurantModel.findById(rid);
 
         if (!restaurant) {
             throw customError('Restaurant doesn\'t exist', 422)
         }
 
-        const menus = restaurant.menus;
+        const menus = restaurant.menus
+            .skip((currentPage - 1) * itemsPerPage)
+            .limit(itemsPerPage);
 
         res.status(200).json({
             mesaage: 'New User menu created',
-            menus: menus
+            menus: menus,
         })
     }
     catch (error) {
@@ -227,14 +232,21 @@ exports.deleteDish = async (req, res, next) => {
 }
 
 exports.getDishes = async (req, res, next) => {
-    const menuId = req.params.menuId;
 
     try {
-        const dishes = await MenuModel.findById(menuId);
+        const menuId = req.params.menuId;
+        const currentPage = req.query.page || 1;
+        const itemsPerPage = 5;
 
-        if (!dishes) {
-            throw customError('dishes doesn\'t exist', 422);
+        const cuisine = await MenuModel.findById(menuId)
+
+        if (!cuisine) {
+            throw customError('cuisine doesn\'t exist', 422);
         }
+
+        const dishes = cuisine.dishes
+            .skip((currentPage - 1) * itemsPerPage)
+            .limit(itemsPerPage);
 
         res.status(200).json({
             mesaage: 'Cuisine dishes fetched',
