@@ -3,20 +3,40 @@ const { Orders } = require('../Databases/index');
 const Delivery = require('../Utils/delivery');
 const { validationResult } = require('express-validator');
 const { customError, errorHandler } = require('../ErrorHandler/index');
+const {MENU_API} = require('../Config/index')
 
 exports.createOrder = async (req, res, next) => {
 
     try {
-        const errors = validationResult(req);
+        const value= req.body
+        
+        const authHeader = req.get('Authorization')
 
-        if (!errors.isEmpty()) {
-            throw customError('Validation error in register', 422)
+        const response = await axios.get(MENU_API + '/cuisine', {
+            headers:{
+                Authorization: authHeader
+            }
+        })
+
+        let myDish = [];
+        for(let i of value){
+            for(let j of response.data.cuisine){
+                for(let k of j.dishes){
+                    if(k._id === i){
+                        myDish.push({
+                            name: k.name,
+                            price: k.price
+                        })
+                    }
+                }
+            }
         }
 
-        const { name, price } = req.body;
+        if(!myDish)
+            throw customError('No such dish exist', 422)
 
         const order = new Orders({
-            dishes: [{ name: name, price: price }],
+            dishes: myDish,
             customerDetails: req.user,
             orderStatus: false
         })
@@ -80,10 +100,10 @@ exports.updateDeliveryStatus = async (req, res, next) => {
         if (!order.deliveryPartner)
             order.deliveryPartner = req.user;
 
-        if (order.deliveryPartner !== req.user)
+        if (order.deliveryPartner.email !== req.user.email)
             throw customError('Unauthorized delivery person', 403)
 
-        const orderSts = order.deliveryStatus;
+        let orderSts = order.deliveryStatus;
 
         if (orderSts === Delivery.OnTheWay) {
             orderSts = Delivery.Reached
@@ -157,7 +177,7 @@ exports.deleteOrder = async (req, res, next) => {
             throw customError('No such order exist', 422)
         }
 
-        if(order.customerDetails !== req.user)
+        if(order.customerDetails.email !== req.user.email)
             throw customError('Not authorized to cancel the order', 403)
 
         const orderSts = order.deliveryStatus;

@@ -166,7 +166,7 @@ exports.createDish = async (req, res, next) => {
         await cuisine.save();
         res.status(200).json({
             mesaage: 'New dish created',
-            restaurant: restaurant
+            cuisine: cuisine
         })
     }
     catch (error) {
@@ -273,4 +273,21 @@ exports.getDishes = async (req, res, next) => {
         next(errorHandler(error));
     }
 
+}
+
+exports.getCuisines = async(req, res, next)=>{
+    try{
+        const cuisine = await MenuModel.find()
+        
+        if(!cuisine)
+            throw customError('No cuisines available ', 422)
+
+        res.status(200).json({
+            message: 'All cuisines in db',
+            cuisine: cuisine
+        })
+    }
+    catch(error){
+        next(errorHandler(error))
+    }
 }

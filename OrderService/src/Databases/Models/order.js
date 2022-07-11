@@ -22,12 +22,10 @@ const orderSchema = new Schema({
         required: true
     },
     deliveryPartner:{
-        type: Object,
-        required: true
+        type: Object
     },
     deliveryStatus:{
         type: String,           // otw or reached or pickup or delivered
-        required: true
     }
 })
 

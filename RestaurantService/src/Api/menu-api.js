@@ -7,6 +7,9 @@ const Roles = require('../../../Utils/roles');
 
 const router = express.Router();
 
+// get all cuisines of all the restaurant
+router.get('/cuisine', isAuth, menuServices.getCuisines)
+
 // ----------------- CUISINES----------------------------
 // create new cuisine
 router.post('/create/:rid/menu', [
@@ -46,6 +49,7 @@ router.delete('/:menuId/dish/:dId', isAuth, isAuthorized(Roles.ADMIN), menuServi
 
 // get all dishes of a cuisine
 router.get('/cuisine/:menuId', isAuth, menuServices.getDishes);
+
 
 module.exports = router;
 

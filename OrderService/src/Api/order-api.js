@@ -8,13 +8,7 @@ const Roles = require('../../../Utils/roles');
 const router = express.Router();
 
 // create new order
-router.post('/create', [
-    body('name', 'Enter valid dish name')
-        .isString()
-        .isLength({ min: 4 }),
-    body('price', 'Enter valid price of the dish')
-        .isNumeric()
-], isAuth, isAuthorized(Roles.CUSTOMER), orderServices.createOrder);
+router.post('/create', isAuth, isAuthorized(Roles.CUSTOMER), orderServices.createOrder);
 
 // fetch order status by customer
 router.get('/:orderId', isAuth, isAuthorized(Roles.CUSTOMER), orderServices.getOrderStatus);
