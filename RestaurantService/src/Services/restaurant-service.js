@@ -1,4 +1,4 @@
-const { RestaurantModel } = require('../Databases/index');
+const { RestaurantModel, MenuModel } = require('../Databases/index');
 
 const { validationResult } = require('express-validator');
 const axios = require('axios').default;
@@ -78,7 +78,7 @@ exports.deleteAdminFromRestaurant = async (req, res, next) => {
         const authHeader = req.get('Authorization')
 
         const adminId = req.params.adminId;
-        const response = await axios.get(USER_API+`?type=admin`, {
+        const response = await axios.get(USER_API + `?type=admin`, {
             headers: {
                 Authorization: authHeader
             }
@@ -215,34 +215,70 @@ exports.searchRestaurant = async (req, res, next) => {
 
         switch (filter) {
             case 'location': {
-                restaurants = await RestaurantModel.find({
-                    $or: [
-                        { filter: { 'regex': value, $options: 'i' } }
-                    ]
-                }).skip((currentPage - 1) * itemsPerPage)
+                restaurants = await RestaurantModel.find
+                    ({
+                        $or: [
+                            { location: { '$regex': value, $options: 'i' } }
+                        ]
+                    })
+                    .skip((currentPage - 1) * itemsPerPage)
                     .limit(itemsPerPage).populate('menus').exec()
                 break;
             }
             case 'cuisine': {
-                restaurants = await RestaurantModel.menus.filter(elem => {
-                    elem.cuisine === value
-                }).skip((currentPage - 1) * itemsPerPage)
-                    .limit(itemsPerPage).populate('menus').exec()
+
+                const cuisines = await MenuModel.find
+                    ({
+                        $or: [
+                            { cuisine: { '$regex': value, $options: 'i' } }
+                        ]
+                    })
+
+
+                const result = await RestaurantModel.find();
+                restaurants = []
+
+                for (let val in cuisines) {
+                    for (let i of result) {
+                        for (let j of i.menus) {
+                            if (JSON.stringify(j) === JSON.stringify(cuisines[val]._id)) {
+                                restaurants.push(i);
+                                break;
+                            }
+                        }
+                    }
+                }
+
                 break;
             }
             case 'dish': {
-                restaurants = await RestaurantModel.menus.dishes.fiter(elem => {
-                    elem.name === value
-                }).skip((currentPage - 1) * itemsPerPage)
-                    .limit(itemsPerPage).populate('menus').exec()
+
+                const allCuisines = await MenuModel.find();
+
+                let cuisines = [];
+                for (let i of allCuisines) {
+                    if (i.dishes.find(elem => elem.name.toLowerCase().includes(value.toLowerCase())))
+                        cuisines.push(i)
+                }
+
+                const result = await RestaurantModel.find();
+                restaurants = []
+
+                for (let val in cuisines) {
+                    for (let i of result) {
+                        for (let j of i.menus) {
+                            if (JSON.stringify(j) === JSON.stringify(cuisines[val]._id)) {
+                                restaurants.push(i);
+                                break;
+                            }
+                        }
+                    }
+                }
+
                 break;
             }
-            case 'ingredients': {
-                restaurants = await RestaurantModel.menus.dishes.ingredients.filter(elem => {
-                    elem === value
-                }).skip((currentPage - 1) * itemsPerPage)
-                    .limit(itemsPerPage).populate('menus').exec()
-                break;
+            default: {
+                throw customError('Filter applied is not available', 404)
             }
         }
 
