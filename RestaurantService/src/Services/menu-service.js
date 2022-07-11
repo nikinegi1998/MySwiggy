@@ -27,8 +27,7 @@ exports.createCuisine = async (req, res, next) => {
             throw customError('Restaurant doesn\'t exist', 422);
         }
 
-        const check = restaurant.admins.find(elem => elem._id === req.user._id)
-        // console.log(check);
+        const check = restaurant.admins.find(elem => elem.email === req.user.email)
 
         if (!check)
             throw customError('Restaurant does not have this admin', 404)
@@ -41,7 +40,8 @@ exports.createCuisine = async (req, res, next) => {
 
         await menu.save();
 
-        await restaurant.save();
+        restaurant.menus.push(menu);
+        await restaurant.save()
 
         res.status(200).json({
             mesaage: 'New cuisine created',
@@ -65,13 +65,13 @@ exports.deleteCuisine = async (req, res, next) => {
         }
 
         const menuId = req.params.menuId;
-        const menu = MenuModel.findById(menuId);
+        const menu = await MenuModel.findById(menuId);
 
         if (!menu) {
             throw customError('Cuisine doesn\'t exist', 422);
         }
 
-        const check = restaurant.admins.find(elem => elem._id === req.user._id)
+        const check = restaurant.admins.find(elem => elem.email === req.user.email)
         // console.log(check);
 
         if (!check)
@@ -80,8 +80,10 @@ exports.deleteCuisine = async (req, res, next) => {
 
         await MenuModel.deleteOne({ _id: menuId });
 
-        restaurant.menus.filter(val => val != menu);
+        const result = restaurant.menus.filter(val =>
+            JSON.stringify(val) !== JSON.stringify(menu._id));
 
+        restaurant.menus = result;
         restaurant.save();
 
         res.status(200).json({
@@ -102,15 +104,15 @@ exports.getAllCuisinesOfRestaurant = async (req, res, next) => {
         const currentPage = req.query.page || 1;
         const itemsPerPage = 5;
 
-        const restaurant = await RestaurantModel.findById(rid);
+        const restaurant = await RestaurantModel.findById(rid)
+            .skip((currentPage - 1) * itemsPerPage)
+            .limit(itemsPerPage).populate('menus');
 
         if (!restaurant) {
             throw customError('Restaurant doesn\'t exist', 422)
         }
 
         const menus = restaurant.menus
-            .skip((currentPage - 1) * itemsPerPage)
-            .limit(itemsPerPage);
 
         res.status(200).json({
             mesaage: 'New User menu created',
@@ -148,7 +150,7 @@ exports.createDish = async (req, res, next) => {
             throw customError('cuisine doesn\'t exist', 422)
         }
 
-        const check = restaurant.admins.find(elem => elem._id === req.user._id)
+        const check = restaurant.admins.find(elem => elem.email === req.user.email)
         // console.log(check);
 
         if (!check)
@@ -164,7 +166,7 @@ exports.createDish = async (req, res, next) => {
         await cuisine.save();
         res.status(200).json({
             mesaage: 'New dish created',
-            menu: menu
+            restaurant: restaurant
         })
     }
     catch (error) {
@@ -173,9 +175,9 @@ exports.createDish = async (req, res, next) => {
 }
 
 exports.updateDish = async (req, res, next) => {
-    const menuId = req.params.menuId;
 
     try {
+        const menuId = req.params.menuId;
         const cuisine = await MenuModel.findById(menuId);
 
         if (!cuisine) {
@@ -184,19 +186,26 @@ exports.updateDish = async (req, res, next) => {
 
         const dId = req.params.dishId;
 
-        const dishIndex = cuisine.dishes.findIndex(val => val.dishId == dId);
+        let dishIndex = cuisine.dishes.findIndex(val => val.dishId === dId);
+
+
         if (dishIndex == -1) {
             throw customError('Dish doesn\'t exist', 422);
         }
 
         const { name, ingredients, veg, price, availability } = req.body;
-        const dish = cuisine.dishes[dishIndex] = { name, ingredients, veg, price, availability }
+
+        cuisine.dishes[dishIndex].name = name
+        cuisine.dishes[dishIndex].ingredients = ingredients
+        cuisine.dishes[dishIndex].veg = veg
+        cuisine.dishes[dishIndex].price = price
+        cuisine.dishes[dishIndex].availability = availability
 
         await cuisine.save();
 
         res.status(200).json({
-            mesaage: 'dishe updated',
-            dish: dish
+            mesaage: 'dish updated',
+            dish: cuisine.dishes
         })
     }
     catch (error) {
@@ -215,14 +224,21 @@ exports.deleteDish = async (req, res, next) => {
             throw customError('Menu doesn\'t exist', 422);
         }
 
-        const dId = req.params.dishId;
+        const dId = req.params.dId;
 
-        const dishes = cuisine.dishes.filter(val => val.dishId != dId);
+        const check = cuisine.dishes.find(val => val.dishId === dId);
 
+        if(!check)
+            throw customError('Dish not available', 422)
+
+        const dishes = cuisine.dishes.filter(val => val.dishId !== dId);
+
+        cuisine.dishes = dishes
         await cuisine.save();
 
         res.status(200).json({
-            mesaage: 'dish deleted'
+            mesaage: 'dish deleted',
+            cuisine: cuisine
         })
     }
     catch (error) {
@@ -239,14 +255,14 @@ exports.getDishes = async (req, res, next) => {
         const itemsPerPage = 5;
 
         const cuisine = await MenuModel.findById(menuId)
+            .skip((currentPage - 1) * itemsPerPage)
+            .limit(itemsPerPage);
 
         if (!cuisine) {
             throw customError('cuisine doesn\'t exist', 422);
         }
 
         const dishes = cuisine.dishes
-            .skip((currentPage - 1) * itemsPerPage)
-            .limit(itemsPerPage);
 
         res.status(200).json({
             mesaage: 'Cuisine dishes fetched',

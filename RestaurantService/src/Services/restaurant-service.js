@@ -3,7 +3,7 @@ const { RestaurantModel } = require('../Databases/index');
 const { validationResult } = require('express-validator');
 const axios = require('axios').default;
 const { customError, errorHandler } = require('../ErrorHandler/index')
-
+const { USER_API } = require('../Config/index');
 
 exports.createRestaurant = async (req, res, next) => {
 
@@ -78,7 +78,7 @@ exports.deleteAdminFromRestaurant = async (req, res, next) => {
         const authHeader = req.get('Authorization')
 
         const adminId = req.params.adminId;
-        const response = await axios.get('http://localhost:7000/user?type=admin', {
+        const response = await axios.get(USER_API+`?type=admin`, {
             headers: {
                 Authorization: authHeader
             }
@@ -177,14 +177,14 @@ exports.addAdmin = async (req, res, next) => {
 
         const authHeader = req.get('Authorization')
 
-        const adminId = req.params.adminId;
-        const response = await axios.get('http://localhost:7000/user?type=admin', {
+        const response = await axios.get(USER_API + `/?type=admin`, {
             headers: {
                 Authorization: authHeader
             }
         })
 
-        const admin = await response.data.users.find((elem) => elem._id === adminId)
+        const adminId = req.params.adminId;
+        const admin = await response.data.users.find(elem => elem._id === adminId)
 
         if (!admin)
             throw customError('Admin does not exist')

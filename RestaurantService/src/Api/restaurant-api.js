@@ -31,7 +31,7 @@ router.patch('/rate/:rId', isAuth, isAuthorized(Roles.CUSTOMER), restrServices.g
 
 // search for restaurant with filter (location, cuisine, dish, ingredients)
 // ? filter & value
-router.get('/search', restrServices.searchRestaurant);
+router.get('/search/', restrServices.searchRestaurant);
 
 // get all restaurants or get restaurant by name using query parameter
 router.get('/', restrServices.getAllRestaurants);

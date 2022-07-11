@@ -35,7 +35,7 @@ const StartServer = async () => {
     })
 
     app.listen(PORT, () => {
-        console.log('Server at PORT 8000');
+        console.log('Server at PORT 9000');
     })
 }
 

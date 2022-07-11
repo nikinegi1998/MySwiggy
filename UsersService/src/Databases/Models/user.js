@@ -32,7 +32,7 @@ const userSchema = new Schema({
     },
     // order details from customer
     orders: {
-        type: Schema.Types.ObjectId
+        type: Object
     },
     // delivery person's rating only
     ratings: {

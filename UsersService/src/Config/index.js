@@ -7,5 +7,8 @@ if(process.env.NOD_ENV !== 'production'){
 module.exports = {
     PORT: process.env.PORT,
     MONGODB_URI: process.env.MONGODB_URI,
-    SECRET: process.env.SECRET
+    SECRET: process.env.SECRET,
+    MENU_API: process.env.MENU_SERVICE,
+    RESTAURANT_API: process.env.RESTAURANT_SERVICE,
+    ORDER_API: process.env.ORDER_SERVICE
 }

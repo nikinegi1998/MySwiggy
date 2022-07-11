@@ -12,19 +12,7 @@ const router = express.Router();
 router.post('/create/:rid/menu', [
     body('cuisine', 'Enter a valid name for a cuisine')
         .isLength({ min: 5 })
-        .isString(),
-    body('name', 'Enter a valid dish name with min length of 4')
         .isString()
-        .isLength({ min: 4 }),
-    body('ingredients', 'Enter a valid ingredients with min length of 4')
-        .isString()
-        .isLength({ min: 4 }),
-    body('veg', 'Enter category(veg/ non veg)')
-        .isBoolean(),
-    body('price', 'Enter a valid price')
-        .isNumeric(),
-    body('availability', 'Enter amount of dish available')
-        .isNumeric()
 ], isAuth, isAuthorized(Roles.ADMIN), menuServices.createCuisine);
 
 // delete a cuisine from restaurant 
@@ -41,8 +29,7 @@ router.post('/create/:rid/:menuId', [
         .isString()
         .isLength({ min: 4 }),
     body('ingredients', 'Enter a valid ingredients with min length of 4')
-        .isString()
-        .isLength({ min: 4 }),
+        .isArray(),
     body('veg', 'Enter category(veg/ non veg)')
         .isBoolean(),
     body('price', 'Enter a valid price')
@@ -58,7 +45,7 @@ router.post('/:menuId/:dishId', isAuth, isAuthorized(Roles.ADMIN), menuServices.
 router.delete('/:menuId/dish/:dId', isAuth, isAuthorized(Roles.ADMIN), menuServices.deleteDish);
 
 // get all dishes of a cuisine
-router.patch('/cuisine/:menuId', isAuth, menuServices.getDishes);
+router.get('/cuisine/:menuId', isAuth, menuServices.getDishes);
 
 module.exports = router;
 

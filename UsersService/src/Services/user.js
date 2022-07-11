@@ -99,18 +99,24 @@ exports.getAllUsers = async (req, res, next) => {
     try {
         const filter = req.query.type;
         const currentPage = req.query.page || 1;
-        
-        const totalUsers = await Users.find().countDocuments()
+
+        // let totalUsers
 
         let users;
 
-        if (filter === Roles.ADMIN)
+        if (filter === Roles.ADMIN) {
+            // totalUsers = await Users.find({ role: Roles.ADMIN }).countDocuments()
+
             users = await Users.find({ role: Roles.ADMIN })
                 .select('-password').select('-ratings').select('-role')
-                .skip((currentPage - 1) * itemsPerPage).limit(itemsPerPage);
-        else
+                // .skip((currentPage - 1) * itemsPerPage).limit(itemsPerPage);
+        }
+        else {
+            // totalUsers = await Users.find({ role: Roles.ADMIN }).countDocuments()
+
             users = await Users.find().select('-password').select('-ratings')
-                .skip((currentPage - 1) * itemsPerPage).limit(itemsPerPage);
+                // .skip((currentPage - 1) * itemsPerPage).limit(itemsPerPage);
+        }
 
         if (!users) {
             throw customError('No users exist', 422);
@@ -120,7 +126,7 @@ exports.getAllUsers = async (req, res, next) => {
         res.status(200).json({
             message: 'List of users',
             users: users,
-            totalUsers: totalUsers
+            // totalUsers: totalUsers
         })
     }
     catch (error) {
