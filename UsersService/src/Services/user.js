@@ -7,8 +7,6 @@ const { Users } = require('../Databases/index');
 const Roles = require('../../../Utils/roles');
 const { customError, errorHandler } = require('../ErrorHandler/index');
 
-const itemsPerPage = 5;
-
 
 exports.registerUser = async (req, res, next) => {
 
@@ -50,6 +48,7 @@ exports.registerUser = async (req, res, next) => {
     }
     catch (error) {
         next(errorHandler(error));
+        return error;
     }
 
 }
@@ -79,7 +78,7 @@ exports.loginUser = async (req, res, next) => {
         const token = jwt.sign({
             email: email,
             role: user.role
-        }, SECRET, { expiresIn: '2h' })
+        }, SECRET, { expiresIn: '4h' })
 
         res.status(200).json({
             message: 'Logged In successfully',
@@ -91,31 +90,20 @@ exports.loginUser = async (req, res, next) => {
     }
     catch (error) {
         next(errorHandler(error));
+        return error;
     }
 }
 
 exports.getAllUsers = async (req, res, next) => {
 
-    try {
-        const filter = req.query.type;
-        const currentPage = req.query.page || 1;
-
-        // let totalUsers
-
-        let users;
+    try {let users;
 
         if (filter === Roles.ADMIN) {
-            // totalUsers = await Users.find({ role: Roles.ADMIN }).countDocuments()
-
-            users = await Users.find({ role: Roles.ADMIN })
+             users = await Users.find({ role: Roles.ADMIN })
                 .select('-password').select('-ratings').select('-role')
-                // .skip((currentPage - 1) * itemsPerPage).limit(itemsPerPage);
         }
         else {
-            // totalUsers = await Users.find({ role: Roles.ADMIN }).countDocuments()
-
             users = await Users.find().select('-password').select('-ratings')
-                // .skip((currentPage - 1) * itemsPerPage).limit(itemsPerPage);
         }
 
         if (!users) {
@@ -126,7 +114,6 @@ exports.getAllUsers = async (req, res, next) => {
         res.status(200).json({
             message: 'List of users',
             users: users,
-            // totalUsers: totalUsers
         })
     }
     catch (error) {
@@ -152,7 +139,7 @@ exports.updateDeliveryRating = async (req, res, next) => {
         await deliveryPerson.save();
 
         res.status(200).json({
-            mesaage: 'ratings updated',
+            mesaage: 'Delivery person\'s ratings updated',
             deliveryDetails: deliveryPerson
         })
     }
