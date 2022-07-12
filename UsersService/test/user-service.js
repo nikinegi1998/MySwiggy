@@ -4,15 +4,13 @@ const mongoose = require('mongoose');
 
 const userService = require('../src/Services/user')
 const User = require('../src/Databases/Models/user')
-
+const {USER_TEST_DB} = require('../src/Config/index')
 
 describe('USER SERVICE TESTING', function () {
 
     before(function (done) {
         mongoose
-            .connect(
-                'mongodb+srv://nikki:z719yEvUAZwuyxXM@cluster0.130pt.mongodb.net/Test-Swiggy-Users?retryWrites=true&w=majority'
-            )
+            .connect(USER_TEST_DB)
             .then(result => {
                 const user = new User([{
                     role: 'superadmin',

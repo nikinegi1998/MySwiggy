@@ -10,5 +10,6 @@ module.exports = {
     SECRET: process.env.SECRET,
     MENU_API: process.env.MENU_SERVICE,
     RESTAURANT_API: process.env.RESTAURANT_SERVICE,
-    ORDER_API: process.env.ORDER_SERVICE
+    ORDER_API: process.env.ORDER_SERVICE,
+    USER_TEST_DB: process.env.USER_TEST_DB
 }
