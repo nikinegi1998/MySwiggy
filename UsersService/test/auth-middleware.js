@@ -51,7 +51,7 @@ describe('AUTHENTICATION MIDDLEWARE TESTING', function () {
 
         authMiddleware(req, {}, () => { })
         expect(req).to.have.property('user')
-
+        expect(jwt.verify.called).to.be.true;
         jwt.verify.restore();
     });
 })
