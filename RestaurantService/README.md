@@ -28,7 +28,6 @@ http://localhost:8000/menu
 | Create new cuisine     | `/create/:rid/menu`      |  ADMIN  |
 | Delete cuisine | `/delete/:rid/:menuId`      |  ADMIN   |
 | Get all cuisines of a restaurant | `/:rid`      |     |
-
 | Create a dish in a cuisine | `/create/:rid/:menuId`      |  ADMIN   |
 | Update dish in a cuisine | `/:menuId/:dishId`      |  ADMIN   |
 | Delete dish in a cuisine | `/:menuId/dish/:dId`      |  ADMIN   |
