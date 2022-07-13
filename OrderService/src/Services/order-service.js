@@ -51,7 +51,7 @@ exports.createOrder = async (req, res, next) => {
     catch (error) {
         next(errorHandler(error));
     }
-
+    return order;
 }
 
 exports.getOrderStatus = async (req, res, next) => {
@@ -85,6 +85,7 @@ exports.getOrderStatus = async (req, res, next) => {
     catch (error) {
         next(errorHandler(error));
     }
+    return order;
 }
 
 exports.updateDeliveryStatus = async (req, res, next) => {
@@ -131,6 +132,7 @@ exports.updateDeliveryStatus = async (req, res, next) => {
         next(errorHandler(error));
     }
 
+    return order;
 }
 
 exports.updateOrderStatus = async (req, res, next) => {
