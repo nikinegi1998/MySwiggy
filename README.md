@@ -14,20 +14,25 @@ git clone https://github.com/nikinegi1998/MySwiggy.git
 
 ## _Install all the dependencies_
 
-Redirect to User Service and install dependencies
+Redirect to the Services and install dependencies
 ```
 cd ./UsersService
 npm install 
 ```
 
-Redirect to Restaurant Service and install dependencies
 ```
 cd ./RestaurantService
 npm install 
 ```
 
-Redirect to Order Service and install dependencies
 ```
 cd ./OrderService
 npm install 
+```
+
+## _Testing_
+
+Run the following command for tetsing
+```
+npm test
 ```
