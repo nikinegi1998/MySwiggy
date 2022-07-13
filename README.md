@@ -32,7 +32,7 @@ npm install
 
 ## _Testing_
 
-Run the following command for tetsing
+Run the following command for testing
 ```
 npm test
 ```
