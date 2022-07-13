@@ -2,7 +2,6 @@
 
 ## _Requirements_
 1. [Node v16.13.2](https://nodejs.org/en/download/)
-2. npm v8.5.2
 3. [Git](https://git-scm.com/downloads)
 4. [MongoDb Compass](https://www.mongodb.com/try/download/compass)
 5. [Postman](https://www.postman.com/downloads/)
