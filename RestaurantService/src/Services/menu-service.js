@@ -4,10 +4,10 @@ const { validationResult } = require('express-validator');
 const { customError, errorHandler } = require('../ErrorHandler/index');
 
 /**
- * creates new cuisine 
- * @param {Request} req incoming request object
- * @param {Response} res outgoing response object
- * @param {Function} next to make a call to next middleware
+ * creates new cuisine for a restaurant by their admin
+ * @param {Request} req 
+ * @param {Response} res
+ * @param {Function} next
  */
 exports.createCuisine = async (req, res, next) => {
 
@@ -54,6 +54,12 @@ exports.createCuisine = async (req, res, next) => {
 
 }
 
+/**
+ * Delete a cuisine by the admin of the restaurant
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ */
 exports.deleteCuisine = async (req, res, next) => {
     const rid = req.params.rid;
 
@@ -96,6 +102,12 @@ exports.deleteCuisine = async (req, res, next) => {
 
 }
 
+/**
+ * get all cuisines of the restaurant by customer
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ */
 exports.getAllCuisinesOfRestaurant = async (req, res, next) => {
 
     try {
@@ -124,6 +136,12 @@ exports.getAllCuisinesOfRestaurant = async (req, res, next) => {
 
 }
 
+/**
+ * create dish in a cuisine of a restaurant
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ */
 exports.createDish = async (req, res, next) => {
 
     try {
@@ -172,6 +190,12 @@ exports.createDish = async (req, res, next) => {
     }
 }
 
+/**
+ * update the details of a dish by the admin
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ */
 exports.updateDish = async (req, res, next) => {
 
     try {
@@ -212,6 +236,12 @@ exports.updateDish = async (req, res, next) => {
 
 }
 
+/**
+ * delete a dish by the admin of the cuisine
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ */
 exports.deleteDish = async (req, res, next) => {
     const menuId = req.params.menuId;
 
@@ -245,6 +275,12 @@ exports.deleteDish = async (req, res, next) => {
 
 }
 
+/**
+ * get all the dishes of a cuisine
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ */
 exports.getDishes = async (req, res, next) => {
 
     try {
@@ -273,6 +309,12 @@ exports.getDishes = async (req, res, next) => {
 
 }
 
+/**
+ * Get all cuisines from the database
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ */
 exports.getCuisines = async (req, res, next) => {
     try {
         const cuisine = await MenuModel.find()

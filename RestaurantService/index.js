@@ -1,7 +1,9 @@
+// installed packages
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
+// imported files
 const {dbConnection} = require('./src/Databases/index');
 const { PORT } = require('./src/Config/index');
 const {restaurantApi, menuApi} = require('./src/Api/index');
@@ -13,6 +15,7 @@ const StartServer = async () => {
     app.use(express.json());
     app.use(bodyParser.json())
 
+    // connecting database
     dbConnection();
 
     app.use('/restaurant', restaurantApi);

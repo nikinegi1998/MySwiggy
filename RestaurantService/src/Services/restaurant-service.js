@@ -5,6 +5,12 @@ const axios = require('axios').default;
 const { customError, errorHandler } = require('../ErrorHandler/index')
 const { USER_API } = require('../Config/index');
 
+/**
+ * creates new restaurant by super admin
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ */
 exports.createRestaurant = async (req, res, next) => {
 
     try {
@@ -44,6 +50,12 @@ exports.createRestaurant = async (req, res, next) => {
     return result;
 }
 
+/**
+ * delete a restaurant by super admin
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ */
 exports.deleteRestaurant = async (req, res, next) => {
     const rid = req.params.rId;
 
@@ -65,32 +77,40 @@ exports.deleteRestaurant = async (req, res, next) => {
     }
 }
 
+/**
+ * Delete admin from restaurant by super admin
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ * @returns 
+ */
 exports.deleteAdminFromRestaurant = async (req, res, next) => {
-    const rId = req.params.rId;
 
     try {
+        const rId = req.params.rId;
         const restaurant = await RestaurantModel.findById(rId);
-
         if (!restaurant) {
             throw customError('Restaurant not exist', 422)
         }
 
+        // fetching the bearer token from the headers
         const authHeader = req.get('Authorization')
 
-        const adminId = req.params.adminId;
+        // calling user service to get the list of admins
         const response = await axios.get(USER_API + `?type=admin`, {
             headers: {
                 Authorization: authHeader
             }
         })
 
-        const admin = await response.data.users.find((elem) => elem._id === adminId)
+        const adminId = req.params.adminId;
 
+        // check if the admin exist
+        const admin = await response.data.users.find((elem) => elem._id === adminId)
         if (!admin)
             throw customError('Admin does not exist')
 
         const result = restaurant.admins.find(elem => elem._id !== admin._id)
-
 
         restaurant.admins = result;
         await restaurant.save()
@@ -106,10 +126,17 @@ exports.deleteAdminFromRestaurant = async (req, res, next) => {
     return response.data;
 }
 
+/**
+ * Give ratings to the restaurantt by customer
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ */
 exports.giveRatings = async (req, res, next) => {
-    const rid = req.params.rId;
 
     try {
+        const rid = req.params.rId;
+
         const restaurant = await RestaurantModel.findOne({ _id: rid });
 
         if (!restaurant) {
@@ -118,6 +145,7 @@ exports.giveRatings = async (req, res, next) => {
 
         const r = req.body.rate;
 
+        // fetching previous ratings and calculating the average of all and updating
         restaurant.ratings.rate = restaurant.ratings.rate * restaurant.ratings.total;
         restaurant.ratings.total += 1;
         restaurant.ratings.rate = (restaurant.ratings.rate + r) / restaurant.ratings.total;
@@ -133,6 +161,12 @@ exports.giveRatings = async (req, res, next) => {
     }
 }
 
+/**
+ * Get list of all the restaurant
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ */
 exports.getAllRestaurants = async (req, res, next) => {
 
     try {
@@ -167,6 +201,12 @@ exports.getAllRestaurants = async (req, res, next) => {
     }
 }
 
+/**
+ * add admin to the restaurant by super admin
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ */
 exports.addAdmin = async (req, res, next) => {
     try {
         const rId = req.params.rId;
@@ -176,8 +216,10 @@ exports.addAdmin = async (req, res, next) => {
             throw customError('Restaurant not exist', 422)
 
 
+        // fetching bearer token from the headers
         const authHeader = req.get('Authorization')
 
+        // calling the user service to fetch list of admin 
         const response = await axios.get(USER_API + `/?type=admin`, {
             headers: {
                 Authorization: authHeader
@@ -190,6 +232,7 @@ exports.addAdmin = async (req, res, next) => {
         if (!admin)
             throw customError('Admin does not exist')
 
+        // check if the admin alreaady exist in restaurant
         if (restaurant.admins.find(elem => elem._id === admin._id))
             throw customError('Admin already exist', 422)
 
@@ -205,6 +248,12 @@ exports.addAdmin = async (req, res, next) => {
     return response.data;
 }
 
+/**
+ * search restaurant with filters applied by the user
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ */
 exports.searchRestaurant = async (req, res, next) => {
 
     try {

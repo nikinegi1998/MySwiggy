@@ -1,13 +1,21 @@
+// installed packages
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 
+// imported files
 const { SECRET } = require('../Config/index');
 const { Users } = require('../Databases/index');
 const Roles = require('../../../Utils/roles');
 const { customError, errorHandler } = require('../ErrorHandler/index');
 
-
+/**
+ * created new user in the database
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ * @returns new user created
+ */
 exports.registerUser = async (req, res, next) => {
 
     try {
@@ -18,9 +26,6 @@ exports.registerUser = async (req, res, next) => {
         }
 
         const { role, email, password, phone, address } = req.body;
-
-        if (role === '')
-            role = Roles.CUSTOMER;
 
         if ((role !== Roles.ADMIN) && (role !== Roles.CUSTOMER) &&
             (role !== Roles.SUPERADMIN) && (role !== Roles.DELIVERY)) {
@@ -53,6 +58,13 @@ exports.registerUser = async (req, res, next) => {
 
 }
 
+/**
+ * user login method 
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ * @returns token, email and role of the user
+ */
 exports.loginUser = async (req, res, next) => {
 
     try {
@@ -94,6 +106,13 @@ exports.loginUser = async (req, res, next) => {
     }
 }
 
+/**
+ * fetches all the user or only the admins 
+ * if query parameter is passed 
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ */
 exports.getAllUsers = async (req, res, next) => {
 
     try {let users;
@@ -121,6 +140,12 @@ exports.getAllUsers = async (req, res, next) => {
     }
 }
 
+/**
+ * updating rating of delivery person by the customer
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ */
 exports.updateDeliveryRating = async (req, res, next) => {
     try {
         const deliveryId = req.params.delvId;
@@ -132,6 +157,7 @@ exports.updateDeliveryRating = async (req, res, next) => {
 
         const r = req.body.rate;
 
+        // fetching previous value and calculating average to update the ratings
         deliveryPerson.ratings.rate *= deliveryPerson.ratings.total;
         deliveryPerson.ratings.total += 1;
         deliveryPerson.ratings.rate = (deliveryPerson.ratings.rate + r) / deliveryPerson.ratings.total;
@@ -148,6 +174,12 @@ exports.updateDeliveryRating = async (req, res, next) => {
     }
 }
 
+/**
+ * delete a user by super admin
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ */
 exports.deleteUser = async (req, res, next) => {
     const uid = req.params.id;
 
@@ -169,6 +201,12 @@ exports.deleteUser = async (req, res, next) => {
     }
 }
 
+/**
+ * switch role of a customer to admin and vice-versa by super admin
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ */
 exports.switchRole = async (req, res, next) => {
     const uid = req.params.id;
 

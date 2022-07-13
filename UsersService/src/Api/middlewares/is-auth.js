@@ -1,10 +1,14 @@
+// installed packages
 const jwt = require('jsonwebtoken');
+
+// imported utility files/ config files
 const { SECRET } = require('../../Config/index');
 const { customError, errorHandler } = require('../../ErrorHandler/index');
 
 
 module.exports = (req, res, next) => {
 
+  // fetching values from the headers
   const authHeader = req.get('Authorization');
   if (!authHeader) {
     throw customError('Not authenticated.', 401);
@@ -13,6 +17,7 @@ module.exports = (req, res, next) => {
 
   let decodedToken;
   try {
+    // verifying the jwt token with the secret
     decodedToken = jwt.verify(token, SECRET);
   }
   catch (error) {

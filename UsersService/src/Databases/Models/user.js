@@ -2,10 +2,14 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
+/**
+ * Schema design for the users
+ */
 const userSchema = new Schema({
     role: {
         type: String,
-        required: true
+        required: true,
+        default: 'customer'
     },
     email: {
         type: String,

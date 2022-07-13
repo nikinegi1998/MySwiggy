@@ -1,3 +1,4 @@
+// Different Roles assigned to a user
 const ROLE = {
     SUPERADMIN: 'superadmin',
     ADMIN: 'admin',

@@ -1,6 +1,8 @@
+// installed packages
 const express = require('express');
 const { body } = require('express-validator');
 
+// imported files/ folder
 const userServices = require('../Services/user');
 const { isAuth, isAuthorized } = require('../Api/middlewares/index');
 const Role = require('../../../Utils/roles');

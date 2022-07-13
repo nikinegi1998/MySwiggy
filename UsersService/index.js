@@ -1,7 +1,9 @@
+// installed packages
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
+// imported files and folders
 const {dbConnection} = require('./src/Databases/index');
 const { PORT } = require('./src/Config/index');
 const userApi = require('./src/Api/user');
@@ -13,6 +15,7 @@ const StartServer = async () => {
     app.use(express.json());
     app.use(bodyParser.json())
 
+    // connecting with the database
     dbConnection();
 
     app.use('/user', userApi);
@@ -33,6 +36,5 @@ const StartServer = async () => {
         console.log('Server at PORT 7000');
     })
 }
-
 
 StartServer();

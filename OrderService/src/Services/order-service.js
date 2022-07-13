@@ -1,10 +1,19 @@
+// installed packages
 const axios = require('axios');
 const { Orders } = require('../Databases/index');
-const Delivery = require('../Utils/delivery');
 const { validationResult } = require('express-validator');
+
+// imported files
+const Delivery = require('../Utils/delivery');
 const { customError, errorHandler } = require('../ErrorHandler/index');
 const {MENU_API} = require('../Config/index')
 
+/**
+ * place an order by a customer
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ */
 exports.createOrder = async (req, res, next) => {
 
     try {
@@ -54,6 +63,12 @@ exports.createOrder = async (req, res, next) => {
     return order;
 }
 
+/**
+ * get order status by customer
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ */
 exports.getOrderStatus = async (req, res, next) => {
     const orderId = req.params.orderId;
 
@@ -88,6 +103,12 @@ exports.getOrderStatus = async (req, res, next) => {
     return order;
 }
 
+/**
+ * update delivery status by delivery person
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ */
 exports.updateDeliveryStatus = async (req, res, next) => {
     const orderId = req.params.orderId;
 
@@ -135,6 +156,12 @@ exports.updateDeliveryStatus = async (req, res, next) => {
     return order;
 }
 
+/**
+ * update order status by the admin of the restaurant of the dish
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ */
 exports.updateOrderStatus = async (req, res, next) => {
     const orderId = req.params.orderId;
 
@@ -169,6 +196,12 @@ exports.updateOrderStatus = async (req, res, next) => {
 
 }
 
+/**
+ * cancel order by customer 
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ */
 exports.deleteOrder = async (req, res, next) => {
     const orderId = req.params.orderId;
 

@@ -7,10 +7,10 @@ const Roles = require('../../../Utils/roles');
 
 const router = express.Router();
 
+// ----------------- CUISINES----------------------------
 // get all cuisines of all the restaurant
 router.get('/cuisine', isAuth, menuServices.getCuisines)
 
-// ----------------- CUISINES----------------------------
 // create new cuisine
 router.post('/create/:rid/menu', [
     body('cuisine', 'Enter a valid name for a cuisine')
