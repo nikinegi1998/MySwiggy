@@ -1,10 +1,15 @@
 # Order Service APIs
 
+Run the following command and test the APIs
 ```
-http://localhost:9000/order
+npm start
 ```
 
 ## _Endpoints_
+
+```
+http://localhost:9000/order
+```
 
 | Description       | API           | Authorization  |
 | ------------- |:-------------:| -----:|

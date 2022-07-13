@@ -1,10 +1,15 @@
 # User Service APIs
 
+Run the following command and test the APIs
 ```
-http://localhost:7000/user
+npm start
 ```
 
 ## _Endpoints_
+
+```
+http://localhost:7000/user
+```
 
 | Description       | API           | Authorization  |
 | ------------- |:-------------:| -----:|

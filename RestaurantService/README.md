@@ -1,10 +1,15 @@
 # Restaurant and Menu Service APIs
 
+Run the following command and test the APIs
 ```
-http://localhost:8000/restaurant
+npm start
 ```
 
 ## _Endpoints_
+
+```
+http://localhost:8000/restaurant
+```
 
 | Description       | API           | Authorization  |
 | ------------- |:-------------:| -----:|
@@ -16,11 +21,12 @@ http://localhost:8000/restaurant
 | Get all restaurants | `/`      |     |
 
 
+
+## _Endpoints_
+
 ```
 http://localhost:8000/menu
 ```
-
-## _Endpoints_
 
 | Description       | API           | Authorization  |
 | ------------- |:-------------:| -----:|
