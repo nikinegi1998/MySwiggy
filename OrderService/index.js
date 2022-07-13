@@ -1,8 +1,9 @@
+// installed packages
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const axios = require('axios');
 
+// imported files
 const { dbConnection } = require('./src/Databases/index');
 const { PORT } = require('./src/Config/index');
 const orderApi = require('./src/Api/order-api');
@@ -14,11 +15,8 @@ const StartServer = async () => {
     app.use(express.json());
     app.use(bodyParser.json())
 
+    // connecting database
     dbConnection();
-    // axios.get('http://localhost:7000/user')
-    //     .then(function (response) {
-    //         console.log(response)
-    //     });
 
     app.use('/order', orderApi);
 
