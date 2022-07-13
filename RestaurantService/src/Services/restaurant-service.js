@@ -31,7 +31,7 @@ exports.createRestaurant = async (req, res, next) => {
             name, location
         })
 
-        await restaurant.save();
+        const result = await restaurant.save();
 
         res.status(200).json({
             mesaage: 'New restaurant created',
@@ -41,7 +41,7 @@ exports.createRestaurant = async (req, res, next) => {
     catch (error) {
         next(errorHandler(error));
     }
-
+    return result;
 }
 
 exports.deleteRestaurant = async (req, res, next) => {
@@ -103,6 +103,7 @@ exports.deleteAdminFromRestaurant = async (req, res, next) => {
     catch (error) {
         next(errorHandler(error));
     }
+    return response.data;
 }
 
 exports.giveRatings = async (req, res, next) => {
@@ -201,6 +202,7 @@ exports.addAdmin = async (req, res, next) => {
     catch (error) {
         next(errorHandler(error))
     }
+    return response.data;
 }
 
 exports.searchRestaurant = async (req, res, next) => {

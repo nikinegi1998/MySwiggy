@@ -72,7 +72,6 @@ exports.deleteCuisine = async (req, res, next) => {
         }
 
         const check = restaurant.admins.find(elem => elem.email === req.user.email)
-        // console.log(check);
 
         if (!check)
             throw customError('Restaurant does not have this admin', 404)
@@ -151,7 +150,6 @@ exports.createDish = async (req, res, next) => {
         }
 
         const check = restaurant.admins.find(elem => elem.email === req.user.email)
-        // console.log(check);
 
         if (!check)
             throw customError('Restaurant does not have this admin', 404)
@@ -228,7 +226,7 @@ exports.deleteDish = async (req, res, next) => {
 
         const check = cuisine.dishes.find(val => val.dishId === dId);
 
-        if(!check)
+        if (!check)
             throw customError('Dish not available', 422)
 
         const dishes = cuisine.dishes.filter(val => val.dishId !== dId);
@@ -275,11 +273,11 @@ exports.getDishes = async (req, res, next) => {
 
 }
 
-exports.getCuisines = async(req, res, next)=>{
-    try{
+exports.getCuisines = async (req, res, next) => {
+    try {
         const cuisine = await MenuModel.find()
-        
-        if(!cuisine)
+
+        if (!cuisine)
             throw customError('No cuisines available ', 422)
 
         res.status(200).json({
@@ -287,7 +285,7 @@ exports.getCuisines = async(req, res, next)=>{
             cuisine: cuisine
         })
     }
-    catch(error){
+    catch (error) {
         next(errorHandler(error))
     }
 }
