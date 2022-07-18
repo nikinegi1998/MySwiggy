@@ -34,10 +34,9 @@ const userSchema = new Schema({
             type: String
         }
     },
-    // order details from customer
-    orders: {
+    orders: [{
         type: Object
-    },
+    }],
     // delivery person's rating only
     ratings: {
         rate: {

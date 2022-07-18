@@ -37,8 +37,8 @@ router.post('/create/:rid/:menuId', [
         .isBoolean(),
     body('price', 'Enter a valid price')
         .isNumeric(),
-    body('availability', 'Enter amount of dish available')
-        .isNumeric()
+    body('availability', 'Mention the dish availability')
+        .isBoolean()
 ], isAuth, isAuthorized(Roles.ADMIN), menuServices.createDish)
 
 // update dish in a cuisine

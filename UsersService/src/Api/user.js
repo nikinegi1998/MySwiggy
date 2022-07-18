@@ -46,6 +46,12 @@ router.patch('/role/:id', isAuth, isAuthorized(Role.SUPERADMIN), userServices.sw
 // Give ratings to delivery person
 router.patch('/delivery/:delvId', isAuth, isAuthorized(Role.CUSTOMER), userServices.updateDeliveryRating)
 
+// removing order from customer profile
+router.delete('/order', userServices.removeOrder)
+
+// adding order to customer profile
+router.patch('/order', userServices.addOrder)
+
 // get all users or filter get request with query params and page
 router.get('/', isAuth, isAuthorized(Role.SUPERADMIN), userServices.getAllUsers);
 

@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 
 // imported files
-const { SECRET } = require('../Config/index');
+const { SECRET, ORDER_API } = require('../Config/index');
 const { Users } = require('../Databases/index');
 const Roles = require('../../../Utils/roles');
 const { customError, errorHandler } = require('../ErrorHandler/index');
@@ -115,10 +115,11 @@ exports.loginUser = async (req, res, next) => {
  */
 exports.getAllUsers = async (req, res, next) => {
 
-    try {let users;
+    try {
+        let users;
 
         if (filter === Roles.ADMIN) {
-             users = await Users.find({ role: Roles.ADMIN })
+            users = await Users.find({ role: Roles.ADMIN })
                 .select('-password').select('-ratings').select('-role')
         }
         else {
@@ -152,7 +153,7 @@ exports.updateDeliveryRating = async (req, res, next) => {
 
         const deliveryPerson = await Users.findOne({ _id: deliveryId });
 
-        if (!deliveryPerson)
+        if (!deliveryPerson || deliverPerson.role !== Roles.DELIVERY)
             throw customError('Delivery person not exist')
 
         const r = req.body.rate;
@@ -171,6 +172,66 @@ exports.updateDeliveryRating = async (req, res, next) => {
     }
     catch (error) {
         errorHandler(error);
+    }
+}
+
+/**
+ * remove or cancel order from customer profile
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+exports.removeOrder = async (req, res, next) => {
+    try {
+        const order = req.body.order;
+
+        const customer = await Users.findOne({ email: order.customerDetails.email })
+        if (!customer)
+            throw customError('customer doesn\'t exist')
+
+        const check = customer.orders.find(elem => elem._id === order._id)
+        if (!check)
+            throw customError('You haven\'t ordered this')
+
+
+        const result = customer.orders.find(elem => elem._id !== order._id)
+        customer.orders = result;
+
+        res.status(200).json({
+            message: "Successfuly deleted",
+            customer: customer
+        })
+
+    }
+    catch (error) {
+        next(errorHandler(error))
+    }
+}
+
+/**
+ * adds order details to customer data
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+exports.addOrder = async (req, res, next) => {
+    try {
+        const { result } = req.body;
+
+        const user = await Users.findOne({ email: result.customerDetails.email })
+
+        if (!user)
+            throw customError('User not exist', 404)
+
+        user.orders.push(result)
+
+        res.status(200).json({
+            message: 'Order added to customer profile',
+            user: user
+        })
+    }
+    catch (error) {
+        next(errorHandler(error))
     }
 }
 

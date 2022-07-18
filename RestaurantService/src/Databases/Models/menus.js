@@ -29,7 +29,7 @@ const menusSchema = new Schema({
                 required: true
             },
             availability: {
-                type: Number,
+                type: Boolean,
                 required: true
             }
         }

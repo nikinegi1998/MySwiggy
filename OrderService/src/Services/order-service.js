@@ -1,12 +1,11 @@
 // installed packages
 const axios = require('axios');
 const { Orders } = require('../Databases/index');
-const { validationResult } = require('express-validator');
 
 // imported files
 const Delivery = require('../Utils/delivery');
 const { customError, errorHandler } = require('../ErrorHandler/index');
-const {MENU_API} = require('../Config/index')
+const { MENU_API, USER_API } = require('../Config/index')
 
 /**
  * place an order by a customer
@@ -17,21 +16,24 @@ const {MENU_API} = require('../Config/index')
 exports.createOrder = async (req, res, next) => {
 
     try {
-        const value= req.body
-        
+        const value = req.body
+
         const authHeader = req.get('Authorization')
 
         const response = await axios.get(MENU_API + '/cuisine', {
-            headers:{
+            headers: {
                 Authorization: authHeader
             }
         })
 
         let myDish = [];
-        for(let i of value){
-            for(let j of response.data.cuisine){
-                for(let k of j.dishes){
-                    if(k._id === i){
+        for (let i of value) {
+            for (let j of response.data.cuisine) {
+                for (let k of j.dishes) {
+                    if (k._id === i) {
+                        if(!k.availability){
+                            throw customError('One of the dish is not available', 422)
+                        }
                         myDish.push({
                             name: k.name,
                             price: k.price
@@ -41,7 +43,7 @@ exports.createOrder = async (req, res, next) => {
             }
         }
 
-        if(!myDish)
+        if (!myDish)
             throw customError('No such dish exist', 422)
 
         const order = new Orders({
@@ -50,17 +52,20 @@ exports.createOrder = async (req, res, next) => {
             orderStatus: false
         })
 
-        await order.save();
+        const result = await order.save();
+
+        await axios.patch(`${USER_API}/order`, {
+            result: result
+        })
 
         res.status(200).json({
-            mesaage: 'New order placed',
+            message: 'New order placed',
             order: order
         })
     }
     catch (error) {
         next(errorHandler(error));
     }
-    return order;
 }
 
 /**
@@ -203,16 +208,16 @@ exports.updateOrderStatus = async (req, res, next) => {
  * @param {next} next 
  */
 exports.deleteOrder = async (req, res, next) => {
-    const orderId = req.params.orderId;
 
     try {
+        const orderId = req.params.orderId;
         const order = await Orders.findById(orderId);
 
         if (!order) {
             throw customError('No such order exist', 422)
         }
 
-        if(order.customerDetails.email !== req.user.email)
+        if (order.customerDetails.email !== req.user.email)
             throw customError('Not authorized to cancel the order', 403)
 
         const orderSts = order.deliveryStatus;
@@ -222,6 +227,13 @@ exports.deleteOrder = async (req, res, next) => {
             (orderSts === Delivery.Delivered)) {
             throw customError('You can\'t cancel order now', 401)
         }
+
+        const check = await axios.delete(USER_API+`/order`, {
+            order: order
+        })
+
+        if(check.data.message !== "Successfuly deleted")
+            throw customError('You can\'t delete other users order', 403)
 
         await order.deleteOne({ _id: orderId })
         res.status(200).json({
