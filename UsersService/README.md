@@ -11,11 +11,11 @@ npm start
 http://localhost:7000/user
 ```
 
-| Description       | API           | Authorization  |
-| ------------- |:-------------:| -----:|
-| Register User      | `/register` |  |
-| Login User     | `/login`      |    |
-| Delete restaurant admin | `/:id`      |  SUPER ADMIN   |
-| Switch Role(customer/admin) | `/role/:id`      |  SUPER ADMIN   |
-| Rate Delivery person | `/delivery/:delvId`      |  CUSTOMER   |
-| Get all users/ admins | `/`      |  SUPER ADMIN   |
+| Description       | API           | Request Type           | Authorization  |
+| ------------- |:-------------:|:-------------:| -----:|
+| Register User      | `/register` | _POST_ |  |
+| Login User     | `/login`      |_POST_ |    |
+| Delete restaurant admin | `/:id`      |_DELETE_ |  SUPER ADMIN   |
+| Switch Role(customer/admin) | `/role/:id`      | _PATCH_ |  SUPER ADMIN   |
+| Rate Delivery person | `/delivery/:delvId`      | _PATCH_ |  CUSTOMER   |
+| Get all users/ admins | `/`      | _GET_ |  SUPER ADMIN   |

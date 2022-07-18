@@ -11,10 +11,10 @@ npm start
 http://localhost:9000/order
 ```
 
-| Description       | API           | Authorization  |
-| ------------- |:-------------:| -----:|
-| Place/create order      | `/create` | CUSTOMER |
-| Fetch order status     | `/:orderId`      |  CUSTOMER  |
-| Update delivery status | `/deliverystatus/:orderId`      |  DELIVERY   |
-| Update order status | `/orderstatus/:orderId`      |  ADMIN   |
-| Cancel order | `/:orderId`      |  CUSTOMER   |
+| Description       | API           | Request Type| Authorization  |
+| ------------- |:-------------:|:-------------:| -----:|
+| Place/create order      | `/create` | _POST_| CUSTOMER |
+| Fetch order status     | `/:orderId`      | _GET_|  CUSTOMER  |
+| Update delivery status | `/deliverystatus/:orderId`     | _PATCH_ |  DELIVERY   |
+| Update order status | `/orderstatus/:orderId`    | _PATCH_  |  ADMIN   |
+| Cancel order | `/:orderId`      | _DELETE_ |  CUSTOMER   |
