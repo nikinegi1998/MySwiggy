@@ -47,7 +47,6 @@ exports.createRestaurant = async (req, res, next) => {
     catch (error) {
         next(errorHandler(error));
     }
-    return result;
 }
 
 /**
@@ -123,7 +122,6 @@ exports.deleteAdminFromRestaurant = async (req, res, next) => {
     catch (error) {
         next(errorHandler(error));
     }
-    return response.data;
 }
 
 /**
@@ -174,22 +172,36 @@ exports.getAllRestaurants = async (req, res, next) => {
         const itemsPerPage = 5;
         const filter = req.query.name;
 
-        const totalRestaurants = await RestaurantModel.find().countDocuments()
+        let totalRestaurants, restaurants;
 
-        let restaurants;
+        if (!filter) {
+            totalRestaurants = await RestaurantModel.find()
+                .countDocuments()
 
-        if (!filter)
             restaurants = await RestaurantModel.find()
                 .skip((currentPage - 1) * itemsPerPage)
                 .limit(itemsPerPage);
-        else
-            restaurants = await RestaurantModel.find({ name: filter })
+        }
+        else {
+            totalRestaurants = await RestaurantModel.find({
+                $or: [
+                    { name: { '$regex': filter, $options: 'i' } }
+                ]
+            }).countDocuments()
+
+            restaurants = await RestaurantModel.find({
+                $or: [
+                    { name: { '$regex': filter, $options: 'i' } }
+                ]
+            })
                 .skip((currentPage - 1) * itemsPerPage)
                 .limit(itemsPerPage)
+        }
 
         if (!restaurants) {
             throw customError('No restaurants exist', 422)
         }
+
         res.status(200).json({
             message: 'List of restaurants',
             restaurants: restaurants,
@@ -245,7 +257,6 @@ exports.addAdmin = async (req, res, next) => {
     catch (error) {
         next(errorHandler(error))
     }
-    return response.data;
 }
 
 /**
@@ -304,27 +315,28 @@ exports.searchRestaurant = async (req, res, next) => {
             }
             case 'dish': {
 
-                const allCuisines = await MenuModel.find();
+                const allCuisines = await MenuModel.where('dishes.name', value);
 
-                let cuisines = [];
-                for (let i of allCuisines) {
-                    if (i.dishes.find(elem => elem.name.toLowerCase().includes(value.toLowerCase())))
-                        cuisines.push(i)
-                }
+                console.log(allCuisines)
+                // let cuisines = [];
+                // for (let i of allCuisines) {
+                //     if (i.dishes.find(elem => elem.name.toLowerCase().includes(value.toLowerCase())))
+                //         cuisines.push(i)
+                // }
 
-                const result = await RestaurantModel.find();
-                restaurants = []
+                // const restResult = await RestaurantModel.find();
+                // restaurants = []
 
-                for (let val in cuisines) {
-                    for (let i of result) {
-                        for (let j of i.menus) {
-                            if (JSON.stringify(j) === JSON.stringify(cuisines[val]._id)) {
-                                restaurants.push(i);
-                                break;
-                            }
-                        }
-                    }
-                }
+                // for (let val in cuisines) {
+                //     for (let i of restResult) {
+                //         for (let j of i.menus) {
+                //             if (JSON.stringify(j) === JSON.stringify(cuisines[val]._id)) {
+                //                 restaurants.push(i);
+                //                 break;
+                //             }
+                //         }
+                //     }
+                // }
 
                 break;
             }

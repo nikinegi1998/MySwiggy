@@ -37,7 +37,7 @@ router.post('/login', [
         .trim()
 ], userServices.loginUser);
 
-// delete a restaurant admin by super admin
+// delete a user by super admin
 router.delete('/:id', isAuth, isAuthorized(Role.SUPERADMIN), userServices.deleteUser);
 
 // switch role (restaurant admin/ customer) by super admin

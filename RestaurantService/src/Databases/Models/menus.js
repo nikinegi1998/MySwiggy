@@ -9,10 +9,6 @@ const menusSchema = new Schema({
     },
     dishes: [
         {
-            dishId:{
-                type: String,
-                required: true
-            },
             name: {
                 type: String,
                 required: true

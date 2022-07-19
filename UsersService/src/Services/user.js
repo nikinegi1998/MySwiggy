@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 
 // imported files
-const { SECRET, ORDER_API } = require('../Config/index');
+const { SECRET } = require('../Config/index');
 const { Users } = require('../Databases/index');
 const Roles = require('../../../Utils/roles');
 const { customError, errorHandler } = require('../ErrorHandler/index');
@@ -117,6 +117,7 @@ exports.getAllUsers = async (req, res, next) => {
 
     try {
         let users;
+        const filter = req.query.type;
 
         if (filter === Roles.ADMIN) {
             users = await Users.find({ role: Roles.ADMIN })
@@ -130,10 +131,12 @@ exports.getAllUsers = async (req, res, next) => {
             throw customError('No users exist', 422);
         }
 
+        const total = users.length;
 
         res.status(200).json({
             message: 'List of users',
             users: users,
+            total: total
         })
     }
     catch (error) {
@@ -153,8 +156,8 @@ exports.updateDeliveryRating = async (req, res, next) => {
 
         const deliveryPerson = await Users.findOne({ _id: deliveryId });
 
-        if (!deliveryPerson || deliverPerson.role !== Roles.DELIVERY)
-            throw customError('Delivery person not exist')
+        if (!deliveryPerson || deliveryPerson.role !== Roles.DELIVERY)
+            throw customError('Delivery person not exist', 422)
 
         const r = req.body.rate;
 
@@ -218,12 +221,16 @@ exports.addOrder = async (req, res, next) => {
     try {
         const { result } = req.body;
 
+
         const user = await Users.findOne({ email: result.customerDetails.email })
 
         if (!user)
             throw customError('User not exist', 404)
 
+        delete result["customerDetails"];
+
         user.orders.push(result)
+        await user.save()
 
         res.status(200).json({
             message: 'Order added to customer profile',
@@ -247,7 +254,7 @@ exports.deleteUser = async (req, res, next) => {
     try {
         const user = await Users.findById(uid);
 
-        if (!user) {
+        if (!user || user.role !== Roles.DELIVERY) {
             throw customError('User not exist', 422);
         }
 
@@ -280,7 +287,7 @@ exports.switchRole = async (req, res, next) => {
 
         if (user.role === Roles.ADMIN)
             user.role = Roles.CUSTOMER;
-        else
+        else if (user.role === Roles.CUSTOMER)
             user.role = Roles.ADMIN;
 
         await user.save();

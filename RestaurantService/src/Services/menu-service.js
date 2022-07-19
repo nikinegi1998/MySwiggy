@@ -1,5 +1,4 @@
 const { MenuModel, RestaurantModel } = require('../Databases/index');
-const uuid = require('uuid');
 const { validationResult } = require('express-validator');
 const { customError, errorHandler } = require('../ErrorHandler/index');
 
@@ -64,7 +63,7 @@ exports.deleteCuisine = async (req, res, next) => {
     const rid = req.params.rid;
 
     try {
-        const restaurant = await RestaurantModel.findById(rid);
+        const restaurant = await RestaurantModel.findById(rid).populate('menus').exec();
 
         if (!restaurant) {
             throw customError('Restaurant doesn\'t exist', 422);
@@ -82,14 +81,13 @@ exports.deleteCuisine = async (req, res, next) => {
         if (!check)
             throw customError('Restaurant does not have this admin', 404)
 
-
-        await MenuModel.deleteOne({ _id: menuId });
-
         const result = restaurant.menus.filter(val =>
-            JSON.stringify(val) !== JSON.stringify(menu._id));
+            JSON.stringify(val._id) !== JSON.stringify(menuId));
 
         restaurant.menus = result;
-        restaurant.save();
+        await restaurant.save();
+
+        await MenuModel.deleteOne({ _id: menuId });
 
         res.status(200).json({
             mesaage: 'Cuisine deleted!',
@@ -176,7 +174,6 @@ exports.createDish = async (req, res, next) => {
         const { name, ingredients, veg, price, availability } = req.body;
 
         cuisine.dishes.push({
-            dishId: uuid.v4(),
             name, ingredients, veg, price, availability
         })
         await cuisine.save();
@@ -208,7 +205,9 @@ exports.updateDish = async (req, res, next) => {
 
         const dId = req.params.dishId;
 
-        let dishIndex = cuisine.dishes.findIndex(val => val.dishId === dId);
+        let dishIndex = cuisine.dishes.findIndex(val =>
+            JSON.stringify(val._id) === JSON.stringify(dId)
+        );
 
 
         if (dishIndex == -1) {
@@ -254,12 +253,12 @@ exports.deleteDish = async (req, res, next) => {
 
         const dId = req.params.dId;
 
-        const check = cuisine.dishes.find(val => val.dishId === dId);
+        const check = cuisine.dishes.find(val => JSON.stringify(val._id) === JSON.stringify(dId));
 
         if (!check)
             throw customError('Dish not available', 422)
 
-        const dishes = cuisine.dishes.filter(val => val.dishId !== dId);
+        const dishes = cuisine.dishes.filter(val => JSON.stringify(val._id) !== JSON.stringify(dId));
 
         cuisine.dishes = dishes
         await cuisine.save();
@@ -317,6 +316,8 @@ exports.getDishes = async (req, res, next) => {
  */
 exports.getCuisines = async (req, res, next) => {
     try {
+        const totalCuisine = await MenuModel.find().countDocuments()
+
         const cuisine = await MenuModel.find()
 
         if (!cuisine)
@@ -324,7 +325,8 @@ exports.getCuisines = async (req, res, next) => {
 
         res.status(200).json({
             message: 'All cuisines in db',
-            cuisine: cuisine
+            cuisine: cuisine,
+            total: totalCuisine
         })
     }
     catch (error) {

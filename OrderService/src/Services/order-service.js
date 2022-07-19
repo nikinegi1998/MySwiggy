@@ -83,6 +83,9 @@ exports.getOrderStatus = async (req, res, next) => {
             throw customError('No such order exist', 422)
         }
 
+        if(req.user.email !== order.customerDetails.email)
+            throw customError('You can\'t access others order status', 422)
+
         const orderstatus = order.orderStatus;
 
         var delivery;
@@ -105,7 +108,6 @@ exports.getOrderStatus = async (req, res, next) => {
     catch (error) {
         next(errorHandler(error));
     }
-    return order;
 }
 
 /**
@@ -123,6 +125,9 @@ exports.updateDeliveryStatus = async (req, res, next) => {
         if (!order) {
             throw customError('No such order exist', 422)
         }
+
+        if(!order.orderStatus)
+            throw customError('Order not yet accepted by restaurant admin', 422)
 
         if (!order.deliveryPartner)
             order.deliveryPartner = req.user;
@@ -157,8 +162,6 @@ exports.updateDeliveryStatus = async (req, res, next) => {
     catch (error) {
         next(errorHandler(error));
     }
-
-    return order;
 }
 
 /**
@@ -180,11 +183,6 @@ exports.updateOrderStatus = async (req, res, next) => {
         if (!order.orderStatus) {
             order.orderStatus = true;
             order.deliveryStatus = Delivery.OnTheWay;
-        }
-        else {
-            order.orderStatus = false;
-            order.deliveryStatus = '';
-            order.deliveryPartner = '';
         }
 
         await order.save()
