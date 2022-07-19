@@ -2,7 +2,7 @@ const express = require('express');
 const { body } = require('express-validator');
 
 const restrServices = require('../Services/restaurant-service');
-const {isAuth, isAuthorized} = require('../Api/middlewares/index');
+const { isAuth, isAuthorized } = require('../Api/middlewares/index');
 const Roles = require('../../../Utils/roles');
 
 const router = express.Router();
@@ -30,10 +30,11 @@ router.delete('/:rId', isAuth, isAuthorized(Roles.SUPERADMIN), restrServices.del
 router.patch('/rate/:rId', isAuth, isAuthorized(Roles.CUSTOMER), restrServices.giveRatings);
 
 // search for restaurant with filter (location, cuisine, dish, ingredients)
+// or get restaurant by name using query parameter
 // ? filter & value
 router.get('/search/', restrServices.searchRestaurant);
 
-// get all restaurants or get restaurant by name using query parameter
+// get all restaurants 
 router.get('/', restrServices.getAllRestaurants);
 
 module.exports = router;

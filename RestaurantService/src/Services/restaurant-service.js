@@ -169,34 +169,13 @@ exports.getAllRestaurants = async (req, res, next) => {
 
     try {
         const currentPage = req.query.page || 1;
-        const itemsPerPage = 5;
-        const filter = req.query.name;
+        const itemsPerPage = 7;
 
-        let totalRestaurants, restaurants;
+        const totalRestaurants = await RestaurantModel.find().countDocuments()
 
-        if (!filter) {
-            totalRestaurants = await RestaurantModel.find()
-                .countDocuments()
+        const restaurants = await RestaurantModel.find()
+            .skip((currentPage - 1) * itemsPerPage).limit(itemsPerPage)
 
-            restaurants = await RestaurantModel.find()
-                .skip((currentPage - 1) * itemsPerPage)
-                .limit(itemsPerPage);
-        }
-        else {
-            totalRestaurants = await RestaurantModel.find({
-                $or: [
-                    { name: { '$regex': filter, $options: 'i' } }
-                ]
-            }).countDocuments()
-
-            restaurants = await RestaurantModel.find({
-                $or: [
-                    { name: { '$regex': filter, $options: 'i' } }
-                ]
-            })
-                .skip((currentPage - 1) * itemsPerPage)
-                .limit(itemsPerPage)
-        }
 
         if (!restaurants) {
             throw customError('No restaurants exist', 422)
@@ -268,23 +247,27 @@ exports.addAdmin = async (req, res, next) => {
 exports.searchRestaurant = async (req, res, next) => {
 
     try {
-        const currentPage = req.query.page || 1;
-        const itemsPerPage = 5;
         const filter = req.query.filter;
         const value = req.query.value;
 
         let restaurants;
 
         switch (filter) {
+            case 'name': {
+                restaurants = await RestaurantModel.find({
+                    $or: [
+                        { name: { '$regex': value, $options: 'i' } }
+                    ]
+                }).select('-admins').populate('menus').exec();
+                break;
+            }
             case 'location': {
                 restaurants = await RestaurantModel.find
                     ({
                         $or: [
                             { location: { '$regex': value, $options: 'i' } }
                         ]
-                    })
-                    .skip((currentPage - 1) * itemsPerPage)
-                    .limit(itemsPerPage).populate('menus').exec()
+                    }).select('-admins').populate('menus').exec();
                 break;
             }
             case 'cuisine': {
@@ -296,18 +279,15 @@ exports.searchRestaurant = async (req, res, next) => {
                         ]
                     })
 
+                const resResult = await RestaurantModel.find()
+                    .select('-admins').populate('menus').exec();
 
-                const result = await RestaurantModel.find();
                 restaurants = []
 
-                for (let val in cuisines) {
-                    for (let i of result) {
-                        for (let j of i.menus) {
-                            if (JSON.stringify(j) === JSON.stringify(cuisines[val]._id)) {
-                                restaurants.push(i);
-                                break;
-                            }
-                        }
+                for (let val of cuisines) {
+                    for (let elem of resResult) {
+                        if (elem.menus.find(i => JSON.stringify(i._id) === JSON.stringify(val._id)))
+                            restaurants.push(elem)
                     }
                 }
 
@@ -315,28 +295,21 @@ exports.searchRestaurant = async (req, res, next) => {
             }
             case 'dish': {
 
-                const allCuisines = await MenuModel.where('dishes.name', value);
+                const allCuisines = await MenuModel.find({
+                    "dishes.name": value
+                })
 
-                console.log(allCuisines)
-                // let cuisines = [];
-                // for (let i of allCuisines) {
-                //     if (i.dishes.find(elem => elem.name.toLowerCase().includes(value.toLowerCase())))
-                //         cuisines.push(i)
-                // }
+                const restResult = await RestaurantModel.find()
+                    .select('-admins').populate('menus').exec();
 
-                // const restResult = await RestaurantModel.find();
-                // restaurants = []
+                restaurants = []
 
-                // for (let val in cuisines) {
-                //     for (let i of restResult) {
-                //         for (let j of i.menus) {
-                //             if (JSON.stringify(j) === JSON.stringify(cuisines[val]._id)) {
-                //                 restaurants.push(i);
-                //                 break;
-                //             }
-                //         }
-                //     }
-                // }
+                for (let val of allCuisines) {
+                    for (let elem of restResult) {
+                        if (elem.menus.find(i => JSON.stringify(i._id) === JSON.stringify(val._id)))
+                            restaurants.push(elem)
+                    }
+                }
 
                 break;
             }
@@ -345,11 +318,8 @@ exports.searchRestaurant = async (req, res, next) => {
             }
         }
 
-        if (!restaurants)
-            customError('No results found')
-
         res.status(200).json({
-            message: 'Ratings saved for restaurant',
+            message: 'List of restaurant',
             restaurants: restaurants
         })
     }
