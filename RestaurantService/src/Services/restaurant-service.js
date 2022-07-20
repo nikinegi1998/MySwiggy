@@ -1,9 +1,12 @@
-const { RestaurantModel, MenuModel } = require('../Databases/index');
-
 const { validationResult } = require('express-validator');
 const axios = require('axios').default;
+const NodeCache = require('node-cache')
+
+const { RestaurantModel, MenuModel } = require('../Databases/index');
 const { customError, errorHandler } = require('../ErrorHandler/index')
 const { USER_API } = require('../Config/index');
+
+const myCache = new NodeCache({ stdTTL: 10 });
 
 /**
  * creates new restaurant by super admin
@@ -252,69 +255,82 @@ exports.searchRestaurant = async (req, res, next) => {
 
         let restaurants;
 
-        switch (filter) {
-            case 'name': {
-                restaurants = await RestaurantModel.find({
-                    $or: [
-                        { name: { '$regex': value, $options: 'i' } }
-                    ]
-                }).select('-admins').populate('menus').exec();
-                break;
-            }
-            case 'location': {
-                restaurants = await RestaurantModel.find
-                    ({
+        if (myCache.has(value)) {
+            console.log('From Cache search')
+            restaurants = myCache.get(value);
+        }
+        else {
+            console.log('From API search')
+            switch (filter) {
+                case 'name': {
+                    restaurants = await RestaurantModel.find({
                         $or: [
-                            { location: { '$regex': value, $options: 'i' } }
+                            { name: { '$regex': value, $options: 'i' } }
                         ]
                     }).select('-admins').populate('menus').exec();
-                break;
-            }
-            case 'cuisine': {
 
-                const cuisines = await MenuModel.find
-                    ({
-                        $or: [
-                            { cuisine: { '$regex': value, $options: 'i' } }
-                        ]
+                    myCache.set(value, restaurants)
+                    break;
+                }
+                case 'location': {
+                    restaurants = await RestaurantModel.find
+                        ({
+                            $or: [
+                                { location: { '$regex': value, $options: 'i' } }
+                            ]
+                        }).select('-admins').populate('menus').exec();
+                    myCache.set(value, restaurants)
+
+                    break;
+                }
+                case 'cuisine': {
+
+                    const cuisines = await MenuModel.find
+                        ({
+                            $or: [
+                                { cuisine: { '$regex': value, $options: 'i' } }
+                            ]
+                        })
+
+                    const resResult = await RestaurantModel.find()
+                        .select('-admins').populate('menus').exec();
+
+                    restaurants = []
+
+                    for (let val of cuisines) {
+                        for (let elem of resResult) {
+                            if (elem.menus.find(i => JSON.stringify(i._id) === JSON.stringify(val._id))){
+                                restaurants.push(elem)
+                                break;
+                            }
+                        }
+                    }
+                    
+                    break;
+                }
+                case 'dish': {
+
+                    const allCuisines = await MenuModel.find({
+                        "dishes.name": value
                     })
 
-                const resResult = await RestaurantModel.find()
-                    .select('-admins').populate('menus').exec();
+                    const restResult = await RestaurantModel.find()
+                        .select('-admins').populate('menus').exec();
 
-                restaurants = []
+                    restaurants = []
 
-                for (let val of cuisines) {
-                    for (let elem of resResult) {
-                        if (elem.menus.find(i => JSON.stringify(i._id) === JSON.stringify(val._id)))
-                            restaurants.push(elem)
+                    for (let val of allCuisines) {
+                        for (let elem of restResult) {
+                            if (elem.menus.find(i => JSON.stringify(i._id) === JSON.stringify(val._id)))
+                                restaurants.push(elem)
+                        }
                     }
+                    
+                    break;
                 }
-
-                break;
-            }
-            case 'dish': {
-
-                const allCuisines = await MenuModel.find({
-                    "dishes.name": value
-                })
-
-                const restResult = await RestaurantModel.find()
-                    .select('-admins').populate('menus').exec();
-
-                restaurants = []
-
-                for (let val of allCuisines) {
-                    for (let elem of restResult) {
-                        if (elem.menus.find(i => JSON.stringify(i._id) === JSON.stringify(val._id)))
-                            restaurants.push(elem)
-                    }
+                default: {
+                    throw customError('Filter applied is not available', 404)
                 }
-
-                break;
-            }
-            default: {
-                throw customError('Filter applied is not available', 404)
             }
         }
 
