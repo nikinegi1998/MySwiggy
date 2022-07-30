@@ -8,6 +8,8 @@ const { USER_API } = require('../Config/index');
 
 const myCache = new NodeCache({ stdTTL: 10 });
 
+const itemsPerPage = 10;
+
 /**
  * creates new restaurant by super admin
  * @param {req} req 
@@ -44,7 +46,7 @@ exports.createRestaurant = async (req, res, next) => {
 
         res.status(200).json({
             mesaage: 'New restaurant created',
-            restaurant: restaurant
+            restaurant: result
         })
     }
     catch (error) {
@@ -68,10 +70,12 @@ exports.deleteRestaurant = async (req, res, next) => {
             throw customError('Restaurant not exist', 422)
         }
 
+        const deletedRestaurant = restaurant
         await RestaurantModel.deleteOne({ _id: rid });
 
         res.status(200).json({
-            message: 'Restaurant deleted'
+            message: 'Restaurant deleted',
+            deletedRestaurant: deletedRestaurant
         })
     }
     catch (error) {
@@ -172,7 +176,6 @@ exports.getAllRestaurants = async (req, res, next) => {
 
     try {
         const currentPage = req.query.page || 1;
-        const itemsPerPage = 7;
 
         const totalRestaurants = await RestaurantModel.find().countDocuments()
 
@@ -252,6 +255,7 @@ exports.searchRestaurant = async (req, res, next) => {
     try {
         const filter = req.query.filter;
         const value = req.query.value;
+        const currentPage = req.query.page || 1;
 
         let restaurants;
 
@@ -262,23 +266,17 @@ exports.searchRestaurant = async (req, res, next) => {
         else {
             console.log('From API search')
             switch (filter) {
-                case 'name': {
-                    restaurants = await RestaurantModel.find({
-                        $or: [
-                            { name: { '$regex': value, $options: 'i' } }
-                        ]
-                    }).select('-admins').populate('menus').exec();
-
-                    myCache.set(value, restaurants)
-                    break;
-                }
+                case 'name':
                 case 'location': {
                     restaurants = await RestaurantModel.find
                         ({
                             $or: [
+                                { name: { '$regex': value, $options: 'i' } },
                                 { location: { '$regex': value, $options: 'i' } }
                             ]
-                        }).select('-admins').populate('menus').exec();
+                        }).skip((currentPage - 1) * itemsPerPage).limit(itemsPerPage)
+                        .select('-admins').populate('menus').exec()
+
                     myCache.set(value, restaurants)
 
                     break;
@@ -290,22 +288,21 @@ exports.searchRestaurant = async (req, res, next) => {
                             $or: [
                                 { cuisine: { '$regex': value, $options: 'i' } }
                             ]
-                        })
+                        }).skip((currentPage - 1) * itemsPerPage).limit(itemsPerPage)
+
 
                     const resResult = await RestaurantModel.find()
                         .select('-admins').populate('menus').exec();
 
-                    restaurants = []
-
+                    restaurants = new Array()
                     for (let val of cuisines) {
                         for (let elem of resResult) {
-                            if (elem.menus.find(i => JSON.stringify(i._id) === JSON.stringify(val._id))){
-                                restaurants.push(elem)
+                            if (elem.menus.find(i => JSON.stringify(i._id) === JSON.stringify(val._id))) {
+                                restaurants.push( elem);
                                 break;
                             }
                         }
                     }
-                    
                     break;
                 }
                 case 'dish': {
@@ -325,7 +322,7 @@ exports.searchRestaurant = async (req, res, next) => {
                                 restaurants.push(elem)
                         }
                     }
-                    
+
                     break;
                 }
                 default: {

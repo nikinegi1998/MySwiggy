@@ -116,6 +116,7 @@ exports.loginUser = async (req, res, next) => {
 exports.getAllUsers = async (req, res, next) => {
 
     try {
+
         let users;
         const filter = req.query.type;
 
@@ -254,14 +255,15 @@ exports.deleteUser = async (req, res, next) => {
     try {
         const user = await Users.findById(uid);
 
-        if (!user || user.role !== Roles.DELIVERY) {
+        if (!user) {
             throw customError('User not exist', 422);
         }
 
-        await user.deleteOne({ _id: uid });
+        const deletedUser = await user.deleteOne({ _id: uid });
 
         res.status(200).json({
-            message: 'User deleted'
+            message: 'User deleted',
+            deletedUser: deletedUser
         })
     }
     catch (error) {

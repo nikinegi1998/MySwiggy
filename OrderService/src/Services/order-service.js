@@ -32,7 +32,7 @@ exports.createOrder = async (req, res, next) => {
                 for (let k of j.dishes) {
                     if (k._id === i) {
                         if(!k.availability){
-                            throw customError('One of the dish is not available', 422)
+                            throw customError(`Dish with id = ${k._id} is not available `, 422)
                         }
                         myDish.push({
                             name: k.name,
