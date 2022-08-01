@@ -52,6 +52,9 @@ router.delete('/order', userServices.removeOrder)
 // adding order to customer profile
 router.patch('/order', userServices.addOrder)
 
+// checks if the user and role are correct or not
+router.get('/check/:uid/', isAuth, isAuthorized(Role.SUPERADMIN), userServices.checkUserValidity)
+
 // get all users or filter get request with query params and page
 router.get('/', isAuth, isAuthorized(Role.SUPERADMIN), userServices.getAllUsers);
 

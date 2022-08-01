@@ -101,24 +101,27 @@ exports.deleteAdminFromRestaurant = async (req, res, next) => {
 
         // fetching the bearer token from the headers
         const authHeader = req.get('Authorization')
+        
+        const adminId = req.params.adminId;
 
         // calling user service to get the list of admins
-        const response = await axios.get(USER_API + `?type=admin`, {
+        const response = await axios.get(USER_API + `/check/${adminId}/?role=admin`, {
             headers: {
                 Authorization: authHeader
             }
         })
 
-        const adminId = req.params.adminId;
-
         // check if the admin exist
-        const admin = await response.data.users.find((elem) => elem._id === adminId)
-        if (!admin)
-            throw customError('Admin does not exist')
+        if (!response.data.value)
+            throw customError('Not an admin')
 
-        const result = restaurant.admins.find(elem => elem._id !== admin._id)
+        const admin = response.data.user;
 
-        restaurant.admins = result;
+        const result = restaurant.admins.find(elem => elem._id === admin._id)
+        if(!result)
+            throw customError('This admin does not exist in the restaurant', 422)
+
+        restaurant.admins = restaurant.admins.find(elem => elem._id !== admin._id);
         await restaurant.save()
 
         res.status(200).json({
@@ -182,7 +185,6 @@ exports.getAllRestaurants = async (req, res, next) => {
         const restaurants = await RestaurantModel.find()
             .skip((currentPage - 1) * itemsPerPage).limit(itemsPerPage)
 
-
         if (!restaurants) {
             throw customError('No restaurants exist', 422)
         }
@@ -216,25 +218,25 @@ exports.addAdmin = async (req, res, next) => {
         // fetching bearer token from the headers
         const authHeader = req.get('Authorization')
 
+        const adminId = req.params.adminId;
+
         // calling the user service to fetch list of admin 
-        const response = await axios.get(USER_API + `/?type=admin`, {
+        const response = await axios.get(USER_API + `/check/${adminId}/?role=admin`, {
             headers: {
                 Authorization: authHeader
             }
         })
 
-        const adminId = req.params.adminId;
-        const admin = await response.data.users.find(elem => elem._id === adminId)
+        if (!response.data.value)
+            throw customError('Not an admin')
 
-        if (!admin)
-            throw customError('Admin does not exist')
+        const admin = response.data.user;
 
         // check if the admin alreaady exist in restaurant
         if (restaurant.admins.find(elem => elem._id === admin._id))
             throw customError('Admin already exist', 422)
 
         restaurant.admins.push(admin);
-
         await restaurant.save()
 
         res.status(200).json({ message: 'Admin added', restaurant: restaurant })
@@ -255,9 +257,12 @@ exports.searchRestaurant = async (req, res, next) => {
     try {
         const filter = req.query.filter;
         const value = req.query.value;
+        if (!value)
+            throw customError('Enter a valid value', 422)
+
         const currentPage = req.query.page || 1;
 
-        let restaurants;
+        let restaurants, total;
 
         if (myCache.has(value)) {
             console.log('From Cache search')
@@ -268,6 +273,13 @@ exports.searchRestaurant = async (req, res, next) => {
             switch (filter) {
                 case 'name':
                 case 'location': {
+                    total = await RestaurantModel.find({
+                        $or: [
+                            { name: { '$regex': value, $options: 'i' } },
+                            { location: { '$regex': value, $options: 'i' } }
+                        ]
+                    }).countDocuments();
+
                     restaurants = await RestaurantModel.find
                         ({
                             $or: [
@@ -277,7 +289,8 @@ exports.searchRestaurant = async (req, res, next) => {
                         }).skip((currentPage - 1) * itemsPerPage).limit(itemsPerPage)
                         .select('-admins').populate('menus').exec()
 
-                    myCache.set(value, restaurants)
+                    if (restaurants)
+                        myCache.set(value, restaurants)
 
                     break;
                 }
@@ -298,18 +311,19 @@ exports.searchRestaurant = async (req, res, next) => {
                     for (let val of cuisines) {
                         for (let elem of resResult) {
                             if (elem.menus.find(i => JSON.stringify(i._id) === JSON.stringify(val._id))) {
-                                restaurants.push( elem);
+                                restaurants.push(elem);
                                 break;
                             }
                         }
                     }
+                    total = restaurants.length;
                     break;
                 }
                 case 'dish': {
 
                     const allCuisines = await MenuModel.find({
                         "dishes.name": value
-                    })
+                    }).skip((currentPage - 1) * itemsPerPage).limit(itemsPerPage)
 
                     const restResult = await RestaurantModel.find()
                         .select('-admins').populate('menus').exec();
@@ -322,6 +336,7 @@ exports.searchRestaurant = async (req, res, next) => {
                                 restaurants.push(elem)
                         }
                     }
+                    total = restaurants.length;
 
                     break;
                 }
@@ -333,7 +348,8 @@ exports.searchRestaurant = async (req, res, next) => {
 
         res.status(200).json({
             message: 'List of restaurant',
-            restaurants: restaurants
+            restaurants: restaurants,
+            totalRestaurants: total
         })
     }
     catch (error) {

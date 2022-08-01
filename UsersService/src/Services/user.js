@@ -117,15 +117,20 @@ exports.getAllUsers = async (req, res, next) => {
 
     try {
 
+        const itemsPerPage = 10;
+        const currentPage = req.query.page || 1;
+
         let users;
-        const filter = req.query.type;
+        const filter = req.query.role;
 
         if (filter === Roles.ADMIN) {
             users = await Users.find({ role: Roles.ADMIN })
                 .select('-password').select('-ratings').select('-role')
+                .skip((currentPage - 1) * itemsPerPage).limit(itemsPerPage)
         }
         else {
             users = await Users.find().select('-password').select('-ratings')
+                .skip((currentPage - 1) * itemsPerPage).limit(itemsPerPage)
         }
 
         if (!users) {
@@ -300,5 +305,31 @@ exports.switchRole = async (req, res, next) => {
     }
     catch (error) {
         next(errorHandler(error));
+    }
+}
+
+/**
+ * verifies if the user and the role is correct
+ * @param {req} req 
+ * @param {res} res 
+ * @param {next} next 
+ */
+exports.checkUserValidity = async (req, res, next) => {
+    try {
+        const uid = req.params.uid;
+        const role = req.query.role;
+
+        const user = await Users.findById(uid);
+
+        if (!user)
+            throw customError('User not found', 422);
+
+        if (user.role === role)
+            res.status(200).json({ value: true, user: user })
+        else
+            res.status(200).json({ value: false })
+    }
+    catch (error) {
+        next(errorHandler(error))
     }
 }
